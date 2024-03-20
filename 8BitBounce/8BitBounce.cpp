@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include "Ball.h"
+#include "BallWindow.h"
 using namespace std;
 
 int main()
