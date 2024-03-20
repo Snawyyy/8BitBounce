@@ -27,6 +27,8 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 // Timer ID
 const int TIMER_ID = 1;
 
+bool isDragging = false;
+
 LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	{
@@ -92,6 +94,14 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 					ballVy = -ballVy;
 				}
 
+				POINT cursorPos;
+				GetCursorPos(&cursorPos);
+				if (isDragging)
+				{
+					ballX = cursorPos.x - ballRadius;
+					ballY = cursorPos.y - ballRadius;
+				}
+
 				SetWindowPos(hWnd, NULL, ballX, ballY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 				// Redraw the ball
 				InvalidateRect(hWnd, NULL, TRUE);
@@ -135,24 +145,48 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 			break;
 		}
-		case WM_NCHITTEST: // Window Dragging logic
+		case WM_MOUSEMOVE:
 		{
-			// Convert the mouse position to screen coordinates
-			POINT pt = { LOWORD(lParam), HIWORD(lParam) };
-			ScreenToClient(hWnd, &pt);
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_LEAVE; // Specifies that we want a WM_MOUSELEAVE message when the mouse leaves
+			tme.hwndTrack = hWnd;
+			tme.dwHoverTime = HOVER_DEFAULT; // Not needed for WM_MOUSELEAVE but required to be set
 
-			// Define the draggable area, e.g., top 50 pixels of the window
-			RECT draggableArea = { 0, 0, width, height }; // You need to define windowWidth
+			TrackMouseEvent(&tme); // Call this function to start tracking
 
-			// Check if the point is within the draggable area
-			if (PtInRect(&draggableArea, pt))
+			break;
+		}
+		case WM_LBUTTONDOWN:
 			{
-				return HTCAPTION;
+			POINT cursorPos;
+			GetCursorPos(&cursorPos);
+
+			// Update the button's pressed state
+			isDragging = TRUE;
+			ballVx = 0;
+			ballVy = 0;
+			ballAccY = 0;
+
+			// Set the capture to the window
+			SetCapture(hWnd);
+
+			break;
 			}
-			else
+		case WM_LBUTTONUP:
 			{
-				return DefWindowProc(hWnd, uMsg, wParam, lParam);
-			}
+			// Update the button's pressed state
+			isDragging = FALSE;
+			ballAccY = 2;
+
+			// Calculates the velocity on release aka isDraggin = false
+			ballVx = ballX - preBallx;
+			ballVy = ballY - preBally;
+
+			// Release the capture
+			ReleaseCapture();
+
+			break;
 		}
 		case WM_DESTROY:
 		{
