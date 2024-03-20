@@ -8,10 +8,11 @@ int centerH = height / 2;
 
 float ballX = centerW;
 float ballY = centerH;
-float ballVx = 3; // Initial horizontal velocity
-float ballVy = 3; // Initial vertical velocity
-float ballAccY = 1; // Gravity (vertical acceleration)
+float ballVx = 20; // Initial horizontal velocity
+float ballVy = 0; // Initial vertical velocity
+float ballAccY = 2; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
+float friction = 0.99;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -62,11 +63,24 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Update the ball's velocity (apply gravity)
 				ballVy += ballAccY;
 
+				ballVx = ballVx * friction;
+				ballVy = ballVy * friction;
+
+				// Collision with top and bottom of screen
 				if (ballX + ballRadius > screenWidth)
 				{
 					ballVx = -ballVx;
 				}
+				if (ballX + ballRadius < 0)
+				{
+					ballVx = -ballVx;
+				}
+				// collision with left and right of screen
 				if (ballY + ballRadius > screenHeight)
+				{
+					ballVy = -ballVy;
+				}
+				if (ballY + ballRadius < 0)
 				{
 					ballVy = -ballVy;
 				}
