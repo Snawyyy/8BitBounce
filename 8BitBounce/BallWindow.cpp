@@ -97,7 +97,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Collision with top and bottom of screen
 				if (ballY + height > screenHeight - taskbarHeight)
 				{
-					ballVy = -(ballVy - 1);
+					ballVy = -(ballVy - 2);
 					
 				}
 				if (ballY < 0)
