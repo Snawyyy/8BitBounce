@@ -1,10 +1,23 @@
 #include "Ball.h"
 
-
-int width = 100;
-int height = 100;
+// Global variables
+int width = 50;
+int height = 50;
 int centerW = width / 2;
 int centerH = height / 2;
+
+float ballX = centerW;
+float ballY = centerH;
+float ballVx = 3; // Initial horizontal velocity
+float ballVy = 3; // Initial vertical velocity
+float ballAccY = 1; // Gravity (vertical acceleration)
+float ballRadius = width / 2;
+
+int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+// Timer ID
+const int TIMER_ID = 1;
 
 LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -21,6 +34,9 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			// Creates a solid brush for the button background color
 			hBrush = CreateSolidBrush(RGB(100, 0, 0)); // Change the RGB values to set your desired background color
+
+			SetTimer(hWnd, TIMER_ID, 16, NULL); // 16ms interval (approximately 60 FPS)
+
 			break;
 		}
 		case WM_SIZE:
@@ -34,6 +50,31 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 			// NOTE: The region is now owned by the system, no need to call DeleteObject on hRgn
 			break;
+		}
+		case WM_TIMER:
+		{
+			if (wParam == TIMER_ID)
+			{
+				// Update the ball's position
+				ballX += ballVx;
+				ballY += ballVy;
+
+				// Update the ball's velocity (apply gravity)
+				ballVy += ballAccY;
+
+				if (ballX + ballRadius > screenWidth)
+				{
+					ballVx = -ballVx;
+				}
+				if (ballY + ballRadius > screenHeight)
+				{
+					ballVy = -ballVy;
+				}
+
+				SetWindowPos(hWnd, NULL, ballX, ballY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+				// Redraw the ball
+				InvalidateRect(hWnd, NULL, TRUE);
+			}
 		}
 		case WM_PAINT:
 		{
@@ -49,53 +90,48 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 			// Combine the regions to create a ring shape
 			CombineRgn(outerRgn, outerRgn, innerRgn, RGN_DIFF);
-			if (isPressed)
-			{
-				// Set the brush color for the outer ring
-				HBRUSH outerBrush = CreateSolidBrush(RGB(100, 0, 0));
-				SelectObject(hdc, outerBrush);
+			// Set the brush color for the outer ring
+			HBRUSH outerBrush = CreateSolidBrush(RGB(100,0,0));
+			SelectObject(hdc, outerBrush);
 
-				// Fill the outer ring
-				FillRgn(hdc, outerRgn, outerBrush);
+			// Fill the outer ring
+			FillRgn(hdc, outerRgn, outerBrush);
 
-				// Set the brush color for the inner circle
-				HBRUSH innerBrush = CreateSolidBrush(RGB(255, 0, 0));
-				SelectObject(hdc, innerBrush);
+			// Set the brush color for the inner circle
+			HBRUSH innerBrush = CreateSolidBrush(RGB(255, 0, 0));
+			SelectObject(hdc, innerBrush);
 
-				// Fill the inner circle
-				Ellipse(hdc, innerRect.left, innerRect.top, innerRect.right, innerRect.bottom);
-				FillRgn(hdc, innerRgn, innerBrush);
-				// Clean up the brushes and regions
-				DeleteObject(outerBrush);
-				DeleteObject(innerBrush);
-			}
-			else
-			{
-				// Set the brush color for the outer ring
-				HBRUSH outerBrush = CreateSolidBrush(RGB(100,0,0));
-				SelectObject(hdc, outerBrush);
-
-				// Fill the outer ring
-				FillRgn(hdc, outerRgn, outerBrush);
-
-				// Set the brush color for the inner circle
-				HBRUSH innerBrush = CreateSolidBrush(RGB(255, 0, 0));
-				SelectObject(hdc, innerBrush);
-
-				// Fill the inner circle
-				Ellipse(hdc, innerRect.left, innerRect.top, innerRect.right, innerRect.bottom);
-				FillRgn(hdc, innerRgn, innerBrush);
-				// Clean up the brushes and regions
-				DeleteObject(outerBrush);
-				DeleteObject(innerBrush);
-			}
+			// Fill the inner circle
+			Ellipse(hdc, innerRect.left, innerRect.top, innerRect.right, innerRect.bottom);
+			FillRgn(hdc, innerRgn, innerBrush);
+			// Clean up the brushes and regions
+			DeleteObject(outerBrush);
+			DeleteObject(innerBrush);
 			DeleteObject(outerRgn);
 			DeleteObject(innerRgn);
 
 			EndPaint(hWnd, &ps);
+
 			break;
+		}
+		case WM_NCHITTEST: // Window Dragging logic
+		{
+			// Convert the mouse position to screen coordinates
+			POINT pt = { LOWORD(lParam), HIWORD(lParam) };
+			ScreenToClient(hWnd, &pt);
 
+			// Define the draggable area, e.g., top 50 pixels of the window
+			RECT draggableArea = { 0, 0, width, height }; // You need to define windowWidth
 
+			// Check if the point is within the draggable area
+			if (PtInRect(&draggableArea, pt))
+			{
+				return HTCAPTION;
+			}
+			else
+			{
+				return DefWindowProc(hWnd, uMsg, wParam, lParam);
+			}
 		}
 		case WM_DESTROY:
 		{
