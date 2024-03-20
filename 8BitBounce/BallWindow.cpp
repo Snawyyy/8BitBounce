@@ -24,9 +24,10 @@ float ballVy = 0; // Initial vertical velocity
 float preBallx;
 float preBally;
 
-float ballAccY = 2; // Gravity (vertical acceleration)
+float ballAccY = 1.5; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
-float friction = 0.995;
+float friction = 0.99;
+float dampingFactor = 0.9f; // damping factor for energy loss on bounce.
 
 
 // Timer ID
