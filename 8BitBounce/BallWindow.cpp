@@ -26,8 +26,6 @@ float ballAccY = 2; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
 float friction = 0.995;
 
-int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 // Timer ID
 const int TIMER_ID = 1;
@@ -41,7 +39,6 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		static RECT rect;
 		PAINTSTRUCT ps;
 		HDC hdc;
-		static bool isPressed;
 
 		switch (uMsg)
 		{
