@@ -6,6 +6,12 @@ int height = 50;
 int centerW = width / 2;
 int centerH = height / 2;
 
+int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+int centerW = screenWidth / 2;
+int centerH = screenHeight / 2;
+
 float ballX = centerW;
 float ballY = centerH;
 float ballVx = 20; // Initial horizontal velocity
