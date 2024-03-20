@@ -3,8 +3,6 @@
 // Global variables
 int width = 50;
 int height = 50;
-int centerW = width / 2;
-int centerH = height / 2;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -12,8 +10,11 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
 
+// Ball x,y cords
 float ballX = centerW;
 float ballY = centerH;
+
+// velocity
 float ballVx = 20; // Initial horizontal velocity
 float ballVy = 0; // Initial vertical velocity
 float ballAccY = 2; // Gravity (vertical acceleration)
