@@ -52,7 +52,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			ballX = centerW;
 			preBallx = centerW;
 
-			SetTimer(hWnd, TIMER_ID, 16, NULL); // 16ms interval (approximately 60 FPS)
+			SetTimer(hWnd, TIMER_ID, 1, NULL); // 16ms interval (approximately 60 FPS)
 
 			break;
 		}
@@ -78,32 +78,47 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Update the ball's position
 				ballX += ballVx;
 				ballY += ballVy;
+				bool isGrounded = ballY + height >= screenHeight - taskbarHeight - 1;
+				if (!isGrounded)
+				{
+					ballVy += ballAccY;
+				}
+				else
+				{
+					if ((ballVy < 3 && ballVy > -3))
+					{
+					ballVy = ballVy * friction / 2;
+					}
+					ballVx *= friction;
+				}
 
-				// Update the ball's velocity (apply gravity)
-				ballVy += ballAccY;
+				// Apply friction more effectively
+				ballVx *= friction;
+				ballVy *= friction;
 
-				ballVx = ballVx * friction;
-				ballVy = ballVy * friction;
 
-				// collision with left and right of screen
+				// Collision with left and right of screen
 				if (ballX + width > screenWidth)
 				{
-					ballVx = -ballVx;
+					ballVx = -ballVx * friction; // Apply friction on bounce
+					ballX = screenWidth - width; // Prevents the ball from getting stuck right to the screen
 				}
 				if (ballX < 0)
 				{
-					ballVx = -ballVx;
+					ballVx = -ballVx * friction; // Apply friction on bounce
+					ballX = 0; // Prevents the ball from getting stuck left to the screen
 				}
 
 				// Collision with top and bottom of screen
 				if (ballY + height > screenHeight - taskbarHeight)
 				{
-					ballVy = -(ballVy - 2);
-					
+					ballVy = -(ballVy * dampingFactor);
+					ballY = screenHeight - taskbarHeight - height + 1; // Prevents the ball from getting stuck below the screen
 				}
 				if (ballY < 0)
 				{
-					ballVy = -ballVy;
+					ballVy = -ballVy * dampingFactor;
+					ballY = 0; // Prevents the ball from getting stuck above the screen
 				}
 
 				POINT cursorPos;
@@ -112,12 +127,15 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				{
 					ballX = cursorPos.x - ballRadius;
 					ballY = cursorPos.y - ballRadius;
+					// Optionally reset velocities to 0 or apply some logic to handle dragging behavior
 				}
 
 				SetWindowPos(hWnd, NULL, ballX, ballY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-				// Redraw the ball
+				// InvalidateRect(hWnd, NULL, TRUE); // If needed, force the window to redraw
 			}
+			break;
 		}
+
 		case WM_PAINT:
 		{
 			hdc = BeginPaint(hWnd, &ps);
