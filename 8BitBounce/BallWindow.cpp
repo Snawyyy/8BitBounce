@@ -1,4 +1,3 @@
-#include "Ball.h"
 #include "BallWindow.h"
 
 // Global variables
