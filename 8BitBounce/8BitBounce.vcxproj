@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp" />
-    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="BallWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />

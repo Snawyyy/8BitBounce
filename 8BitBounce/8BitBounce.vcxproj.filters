@@ -18,7 +18,7 @@
     <ClCompile Include="8BitBounce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ball.cpp">
+    <ClCompile Include="BallWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
