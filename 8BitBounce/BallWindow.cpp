@@ -1,4 +1,5 @@
 #include "Ball.h"
+#include "BallWindow.h"
 
 // Global variables
 int width = 50;
