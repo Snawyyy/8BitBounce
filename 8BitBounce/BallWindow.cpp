@@ -24,7 +24,7 @@ float preBally;
 
 float ballAccY = 2; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
-float friction = 0.99;
+float friction = 0.995;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
