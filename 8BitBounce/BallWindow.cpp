@@ -1,12 +1,13 @@
 #include "BallWindow.h"
 
 // Global variables
-int width = 50;
-int height = 50;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int taskbarHeight = GetTaskbarHeight();
+
+int width = screenWidth / 30;
+int height = screenWidth / 30;
 
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
@@ -270,4 +271,21 @@ bool Window::ProcessMessages()
 
 	}
 	return true;
+}
+
+int GetTaskbarHeight()
+{
+	APPBARDATA abd;
+	memset(&abd, 0, sizeof(abd));
+	abd.cbSize = sizeof(abd);
+
+	if (SHAppBarMessage(ABM_GETTASKBARPOS, &abd))
+	{
+		return abd.rc.bottom - abd.rc.top;
+	}
+	else
+	{
+		// If the function fails, return a default value (e.g., 0)
+		return 0;
+	}
 }
