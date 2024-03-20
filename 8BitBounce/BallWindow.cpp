@@ -7,6 +7,7 @@ int height = 50;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+int taskbarHeight = GetTaskbarHeight();
 
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
@@ -94,7 +95,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				}
 
 				// Collision with top and bottom of screen
-				if (ballY + height > screenHeight - 60)
+				if (ballY + height > screenHeight - taskbarHeight)
 				{
 					ballVy = -(ballVy - 1);
 					
