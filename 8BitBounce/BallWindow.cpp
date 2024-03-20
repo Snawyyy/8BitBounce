@@ -104,7 +104,6 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 				SetWindowPos(hWnd, NULL, ballX, ballY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 				// Redraw the ball
-				InvalidateRect(hWnd, NULL, TRUE);
 			}
 		}
 		case WM_PAINT:
