@@ -85,21 +85,23 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				ballVx = ballVx * friction;
 				ballVy = ballVy * friction;
 
-				// Collision with top and bottom of screen
-				if (ballX + ballRadius > screenWidth)
-				{
-					ballVx = -ballVx;
-				}
-				if (ballX + ballRadius < 0)
-				{
-					ballVx = -ballVx;
-				}
 				// collision with left and right of screen
-				if (ballY + ballRadius > screenHeight)
+				if (ballX + width > screenWidth)
 				{
-					ballVy = -ballVy;
+					ballVx = -ballVx;
 				}
-				if (ballY + ballRadius < 0)
+				if (ballX < 0)
+				{
+					ballVx = -ballVx;
+				}
+
+				// Collision with top and bottom of screen
+				if (ballY + height > screenHeight - 60)
+				{
+					ballVy = -(ballVy - 1);
+					
+				}
+				if (ballY < 0)
 				{
 					ballVy = -ballVy;
 				}
