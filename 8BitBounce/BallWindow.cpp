@@ -17,6 +17,11 @@ float ballY = centerH;
 // velocity
 float ballVx = 20; // Initial horizontal velocity
 float ballVy = 0; // Initial vertical velocity
+
+// Previous ball x,y cords
+float preBallx;
+float preBally;
+
 float ballAccY = 2; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
 float friction = 0.99;
@@ -44,6 +49,8 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			// Creates a solid brush for the button background color
 			hBrush = CreateSolidBrush(RGB(100, 0, 0)); // Change the RGB values to set your desired background color
+			ballX = centerW;
+			preBallx = centerW;
 
 			SetTimer(hWnd, TIMER_ID, 16, NULL); // 16ms interval (approximately 60 FPS)
 
@@ -65,6 +72,9 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			if (wParam == TIMER_ID)
 			{
+				preBallx = ballX;
+				preBally = ballY;
+
 				// Update the ball's position
 				ballX += ballVx;
 				ballY += ballVy;
