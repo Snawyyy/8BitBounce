@@ -28,7 +28,7 @@ float ballAccY = 1.5; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
 float friction = 0.99f;
 float dampingFactor = 0.85f; // damping factor for energy loss on bounce.
-float restitution = 0.8; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
+float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
 
 // Delta time calculations variables
 
