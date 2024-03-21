@@ -67,7 +67,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		case WM_CREATE:
 		{
 			// Creates a solid brush for the button background color
-			hBrush = CreateSolidBrush(RGB(100, 0, 0)); // Change the RGB values to set your desired background color
+			hBrush = CreateSolidBrush(RGB(red, green, blue)); // Change the RGB values to set your desired background color
 			ballX = centerW;
 			preBallx = centerW;
 
@@ -186,7 +186,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			FillRgn(hdc, outerRgn, outerBrush);
 
 			// Set the brush color for the inner circle
-			HBRUSH innerBrush = CreateSolidBrush(RGB(255, 0, 0));
+			HBRUSH innerBrush = CreateSolidBrush(RGB(red, green, blue));
 			SelectObject(hdc, innerBrush);
 
 			// Fill the inner circle
