@@ -93,6 +93,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Update the ball's position
 				ballX += (ballVx * deltaTime);
 				ballY += (ballVy * deltaTime);
+
 				bool isGrounded = ballY + height >= screenHeight - taskbarHeight - 1;
 				if (!isGrounded)
 				{
