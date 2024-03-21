@@ -99,9 +99,9 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				}
 				else
 				{
-					if ((ballVy < 3 && ballVy > -3))
+					if ((ballVy < 10 && ballVy > -10))
 					{
-					ballVy = ballVy * friction / 2;
+						ballVy = (ballVy * friction / (10 / ballVy));
 					}
 					ballVx *= friction;
 				}
