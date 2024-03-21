@@ -96,7 +96,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				bool isGrounded = ballY + height >= screenHeight - taskbarHeight - 1;
 				if (!isGrounded)
 				{
-					ballVy += ballAccY * deltaTime;
+					ballVy += (ballAccY * deltaTime);
 				}
 				else
 				{
