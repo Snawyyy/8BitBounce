@@ -6,7 +6,7 @@
 #include "ControllerWindow.h"
 using namespace std;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
+int main()
 {
     Window* pWindow = new Window();
 
