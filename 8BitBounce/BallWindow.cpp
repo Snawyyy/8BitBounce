@@ -28,6 +28,7 @@ float ballAccY = 1.5; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
 float friction = 0.99f;
 float dampingFactor = 0.85f; // damping factor for energy loss on bounce.
+float restitution = 0.8; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
 
 // Delta time calculations variables
 
@@ -114,24 +115,24 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Collision with left and right of screen
 				if (ballX + width > screenWidth)
 				{
-					ballVx = -ballVx * dampingFactor; // Apply friction on bounce
+					ballVx = -ballVx * dampingFactor * restitution; // Apply friction and restitution on bounce
 					ballX = screenWidth - width; // Prevents the ball from getting stuck right to the screen
 				}
 				if (ballX < 0)
 				{
-					ballVx = -ballVx * dampingFactor; // Apply friction on bounce
+					ballVx = -ballVx * dampingFactor * restitution; // Apply friction and restitution on bounce
 					ballX = 0; // Prevents the ball from getting stuck left to the screen
 				}
 
 				// Collision with top and bottom of screen
 				if (ballY + height > screenHeight - taskbarHeight)
 				{
-					ballVy = -(ballVy * dampingFactor);
+					ballVy = -(ballVy * dampingFactor * restitution);
 					ballY = screenHeight - taskbarHeight - height + 1; // Prevents the ball from getting stuck below the screen
 				}
 				if (ballY < 0)
 				{
-					ballVy = -ballVy * dampingFactor;
+					ballVy = -ballVy * dampingFactor * restitution;
 					ballY = 0; // Prevents the ball from getting stuck above the screen
 				}
 
