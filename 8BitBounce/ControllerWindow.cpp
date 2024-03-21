@@ -138,11 +138,12 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    int x = screenWidth / 2;
-    int y = screenHeight / 2;
-
     int width = screenWidth / 10;
     int height = screenWidth / 12;
+
+
+    int x = (screenWidth / 2) - width / 2;
+    int y = (screenHeight / 2) - height / 2;
 
     // Get the dimensions of the parent window
     RECT parentRect;
@@ -152,7 +153,7 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
         CLASS_NAME,        // Window class
         L"Controller Window",   // Window text
         WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN, // Window style
-        0, y, width, height,   // Size and position
+        x, y, width, height,   // Size and position
         NULL,           // Parent window    
         NULL,              // Menu
         m_hinstance,         // Instance handle
