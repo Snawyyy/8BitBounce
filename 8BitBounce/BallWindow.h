@@ -18,3 +18,5 @@ private:
 };
 
 int GetTaskbarHeight();
+
+void changeColorRandomly();

@@ -47,13 +47,6 @@ const int TIMER_ID = 1;
 
 bool isDragging = false;
 
-// Function to change the colors randomly
-void changeColorRandomly() {
-	red = rand() % 256;   // Generate a random number between 0 and 255
-	green = rand() % 256; // Generate a random number between 0 and 255
-	blue = rand() % 256;  // Generate a random number between 0 and 255
-}
-
 LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	{
@@ -344,4 +337,11 @@ int GetTaskbarHeight()
 		// If the function fails, return a default value (e.g., 0)
 		return 0;
 	}
+}
+
+// Function to change the colors randomly
+void changeColorRandomly() {
+	red = rand() % 256;   // Generate a random number between 0 and 255
+	green = rand() % 256; // Generate a random number between 0 and 255
+	blue = rand() % 256;  // Generate a random number between 0 and 255
 }
