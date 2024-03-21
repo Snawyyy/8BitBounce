@@ -130,11 +130,17 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				{
 					ballVx = -ballVx * dampingFactor * restitution; // Apply friction and restitution on bounce
 					ballX = screenWidth - width; // Prevents the ball from getting stuck right to the screen
+					changeColorRandomly();
+					InvalidateRect(hWnd, NULL, NULL);
+					RedrawWindow(hWnd, NULL, 0, 0);
 				}
 				if (ballX < 0)
 				{
 					ballVx = -ballVx * dampingFactor * restitution; // Apply friction and restitution on bounce
 					ballX = 0; // Prevents the ball from getting stuck left to the screen
+					changeColorRandomly();
+					InvalidateRect(hWnd, NULL, NULL);
+					RedrawWindow(hWnd, NULL, 0, 0);
 				}
 
 				// Collision with top and bottom of screen
@@ -147,6 +153,9 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				{
 					ballVy = -ballVy * dampingFactor * restitution;
 					ballY = 0; // Prevents the ball from getting stuck above the screen
+					changeColorRandomly();
+					InvalidateRect(hWnd, NULL, NULL);
+					RedrawWindow(hWnd, NULL, 0, 0);
 				}
 
 				POINT cursorPos;
