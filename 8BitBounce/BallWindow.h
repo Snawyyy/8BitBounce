@@ -21,9 +21,10 @@ struct Ball {
     bool isDragging;
 
     Ball() {
-        x = GetSystemMetrics(SM_CXSCREEN) / 2;
-        y = GetSystemMetrics(SM_CYSCREEN) / 2;
-        vx = 20; // Initial horizontal velocity
+        POINT pt;
+        GetCursorPos(&pt);
+
+        vx = 0; // Initial horizontal velocity
         vy = 0; // Initial vertical velocity
         prevX = 0;
         prevY = 0;
@@ -35,6 +36,8 @@ struct Ball {
         lastTime = GetTickCount();
         currentTime = 0;
         deltaTime = 0;
+        x = pt.x - radius;
+        y = pt.y - radius;
         isDragging = false;
     }
 };
