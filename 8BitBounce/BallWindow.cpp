@@ -208,11 +208,6 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         break;
     }
-    case WM_CLOSE: 
-    {
-        DestroyWindow(hWnd);
-        return 0;
-    }
     case WM_DESTROY:
     {
         // Clean up resources
@@ -222,7 +217,6 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         delete pBall;
 
         DestroyWindow(hWnd);
-        return 0;
         break;
     }
     default:
