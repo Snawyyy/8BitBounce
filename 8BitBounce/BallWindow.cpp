@@ -179,7 +179,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			// Combine the regions to create a ring shape
 			CombineRgn(outerRgn, outerRgn, innerRgn, RGN_DIFF);
 			// Set the brush color for the outer ring
-			HBRUSH outerBrush = CreateSolidBrush(RGB(100,0,0));
+			HBRUSH outerBrush = CreateSolidBrush(RGB(0,0,0));
 			SelectObject(hdc, outerBrush);
 
 			// Fill the outer ring
