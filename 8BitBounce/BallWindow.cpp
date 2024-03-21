@@ -29,6 +29,12 @@ float ballRadius = width / 2;
 float friction = 0.99f;
 float dampingFactor = 0.85f; // damping factor for energy loss on bounce.
 
+// Delta time calculations variables
+
+DWORD lastTime = 0;
+DWORD currentTime = 0;
+float deltaTime = 0;
+
 
 // Timer ID
 const int TIMER_ID = 1;
@@ -52,7 +58,10 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			ballX = centerW;
 			preBallx = centerW;
 
-			SetTimer(hWnd, TIMER_ID, 1, NULL); // 16ms interval (approximately 60 FPS)
+			lastTime = GetTickCount();
+
+			SetTimer(hWnd, TIMER_ID, 16, NULL); // 16ms interval (approximately 60 FPS)
+
 
 			break;
 		}
@@ -72,16 +81,21 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			if (wParam == TIMER_ID)
 			{
+
+				currentTime = GetTickCount();
+				deltaTime = (currentTime - lastTime) / 20.0f;
+				lastTime = currentTime;
+
 				preBallx = ballX;
 				preBally = ballY;
 
 				// Update the ball's position
-				ballX += ballVx;
-				ballY += ballVy;
+				ballX += (ballVx * deltaTime);
+				ballY += (ballVy * deltaTime);
 				bool isGrounded = ballY + height >= screenHeight - taskbarHeight - 1;
 				if (!isGrounded)
 				{
-					ballVy += ballAccY;
+					ballVy += ballAccY * deltaTime;
 				}
 				else
 				{
