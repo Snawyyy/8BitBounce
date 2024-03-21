@@ -5,9 +5,6 @@ int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int taskbarHeight = GetTaskbarHeight();
 
-int ballWidth = screenWidth / 30;
-int ballHeight = screenWidth / 30;
-
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
 
@@ -41,7 +38,6 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pBall));
 
         // Initialize the Ball instance members
-        pBall->x = centerW;
         pBall->prevX = centerW;
         pBall->prevY = centerH;
         pBall->lastTime = GetTickCount();
@@ -77,7 +73,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             pBall->x += (pBall->vx * pBall->deltaTime);
             pBall->y += (pBall->vy * pBall->deltaTime);
 
-            bool isGrounded = pBall->y + ballHeight >= screenHeight - taskbarHeight - 1;
+            bool isGrounded = pBall->y + BALL_SIZE >= screenHeight - taskbarHeight - 1;
             if (!isGrounded)
             {
                 pBall->vy += (pBall->accY * pBall->deltaTime);
@@ -96,10 +92,10 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             pBall->vy *= pBall->friction;
 
             // Collision with left and right of screen
-            if (pBall->x + ballWidth > screenWidth)
+            if (pBall->x + BALL_SIZE > screenWidth)
             {
                 pBall->vx = -pBall->vx * pBall->dampingFactor * pBall->restitution; // Apply friction and restitution on bounce
-                pBall->x = screenWidth - ballWidth; // Prevents the ball from getting stuck right to the screen
+                pBall->x = screenWidth - BALL_SIZE; // Prevents the ball from getting stuck right to the screen
                 changeColorRandomly();
                 InvalidateRect(hWnd, NULL, NULL);
                 RedrawWindow(hWnd, NULL, 0, 0);
@@ -114,10 +110,10 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
 
             // Collision with top and bottom of screen
-            if (pBall->y + ballHeight > screenHeight - taskbarHeight)
+            if (pBall->y + BALL_SIZE > screenHeight - taskbarHeight)
             {
                 pBall->vy = -(pBall->vy * pBall->dampingFactor * pBall->restitution);
-                pBall->y = screenHeight - taskbarHeight - ballHeight + 1; // Prevents the ball from getting stuck below the screen
+                pBall->y = screenHeight - taskbarHeight - BALL_SIZE + 1; // Prevents the ball from getting stuck below the screen
             }
             if (pBall->y < 0)
             {
@@ -246,8 +242,8 @@ HWND CreateBallWindow(HWND hParent, HINSTANCE hInstance, int x, int y, int width
         style,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        ballWidth,
-        ballHeight,
+        BALL_SIZE,
+        BALL_SIZE,
         NULL,
         NULL,
         hInstance,

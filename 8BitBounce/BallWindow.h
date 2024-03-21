@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 
+#define BALL_SIZE GetSystemMetrics(SM_CXSCREEN) / 30
+
 struct Ball {
     float x;
     float y;
@@ -26,7 +28,7 @@ struct Ball {
         prevX = 0;
         prevY = 0;
         accY = 1.5; // Gravity (vertical acceleration)
-        radius = (GetSystemMetrics(SM_CXSCREEN) / 30) / 2;
+        radius = BALL_SIZE / 2;
         friction = 0.99f;
         dampingFactor = 0.85f; // Damping factor for energy loss on bounce
         restitution = 0.9f; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
