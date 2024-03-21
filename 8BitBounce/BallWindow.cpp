@@ -114,12 +114,12 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Collision with left and right of screen
 				if (ballX + width > screenWidth)
 				{
-					ballVx = -ballVx * friction; // Apply friction on bounce
+					ballVx = -ballVx * dampingFactor; // Apply friction on bounce
 					ballX = screenWidth - width; // Prevents the ball from getting stuck right to the screen
 				}
 				if (ballX < 0)
 				{
-					ballVx = -ballVx * friction; // Apply friction on bounce
+					ballVx = -ballVx * dampingFactor; // Apply friction on bounce
 					ballX = 0; // Prevents the ball from getting stuck left to the screen
 				}
 
