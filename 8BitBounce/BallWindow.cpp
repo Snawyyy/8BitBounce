@@ -9,6 +9,11 @@ int taskbarHeight = GetTaskbarHeight();
 int width = screenWidth / 30;
 int height = screenWidth / 30;
 
+int red;
+int green;
+int blue;
+
+
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
 
