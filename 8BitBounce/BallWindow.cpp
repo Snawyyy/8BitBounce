@@ -88,7 +88,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			if (wParam == TIMER_ID)
 			{
 
-				currentTime = GetTickCount();
+				currentTime = GetTickCount64();
 				deltaTime = (currentTime - lastTime) / 20.0f;
 				lastTime = currentTime;
 
@@ -251,6 +251,8 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			// Clean up resources
 			DeleteObject(hBrush);
+			KillTimer(hWnd, TIMER_ID);
+			PostQuitMessage(0);
 			break;
 		}
 		default:
