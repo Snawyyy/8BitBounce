@@ -121,7 +121,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				// Collision with left and right of screen
 				if (ballX + width > screenWidth)
 				{
-					ballVx = -ballVx * dampingFactor * restitution; // Apply friction and restitution on bounce
+					ballVx = -(ballVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 					ballX = screenWidth - width; // Prevents the ball from getting stuck right to the screen
 					changeColorRandomly();
 					InvalidateRect(hWnd, NULL, NULL);
@@ -129,7 +129,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				}
 				if (ballX < 0)
 				{
-					ballVx = -ballVx * dampingFactor * restitution; // Apply friction and restitution on bounce
+					ballVx = -(ballVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 					ballX = 0; // Prevents the ball from getting stuck left to the screen
 					changeColorRandomly();
 					InvalidateRect(hWnd, NULL, NULL);
@@ -140,11 +140,11 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				if (ballY + height > screenHeight - taskbarHeight)
 				{
 					ballVy = -(ballVy * dampingFactor * restitution);
-					ballY = screenHeight - taskbarHeight - height + 1; // Prevents the ball from getting stuck below the screen
+					ballY = screenHeight - taskbarHeight - height ; // Prevents the ball from getting stuck below the screen
 				}
 				if (ballY < 0)
 				{
-					ballVy = -ballVy * dampingFactor * restitution;
+					ballVy = -(ballVy * dampingFactor * restitution);
 					ballY = 0; // Prevents the ball from getting stuck above the screen
 					changeColorRandomly();
 					InvalidateRect(hWnd, NULL, NULL);
