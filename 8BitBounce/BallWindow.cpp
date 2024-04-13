@@ -22,14 +22,14 @@ float ballX = centerW;
 float ballY = centerH;
 
 // velocity
-float ballVx = 20; // Initial horizontal velocity
+float ballVx = 200; // Initial horizontal velocity
 float ballVy = 0; // Initial vertical velocity
 
 // Previous ball x,y cords
 float preBallx;
 float preBally;
 
-float ballAccY = 1.5; // Gravity (vertical acceleration)
+float ballAccY = 3; // Gravity (vertical acceleration)
 float ballRadius = width / 2;
 float friction = 0.99f;
 float dampingFactor = 0.85f; // damping factor for energy loss on bounce.
@@ -236,11 +236,11 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			{
 			// Update the button's pressed state
 			isDragging = FALSE;
-			ballAccY = 2;
+			ballAccY = 3;
 
 			// Calculates the velocity on release aka isDraggin = false
-			ballVx = ballX - preBallx;
-			ballVy = ballY - preBally;
+			ballVx = (ballX - preBallx) * 50;
+			ballVy = (ballY - preBally) * 50;
 
 			// Release the capture
 			ReleaseCapture();
