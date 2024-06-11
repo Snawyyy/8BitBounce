@@ -29,8 +29,6 @@ float deltaTime = 0;
 // Timer ID
 const int TIMER_ID = 1;
 
-bool isDragging = false;
-
 LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	{
@@ -120,13 +118,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		case WM_MOUSEMOVE:
 		{
-			TRACKMOUSEEVENT tme;
-			tme.cbSize = sizeof(TRACKMOUSEEVENT);
-			tme.dwFlags = TME_LEAVE; // Specifies that we want a WM_MOUSELEAVE message when the mouse leaves
-			tme.hwndTrack = hWnd;
-			tme.dwHoverTime = HOVER_DEFAULT; // Not needed for WM_MOUSELEAVE but required to be set
-
-			TrackMouseEvent(&tme); // Call this function to start tracking
+			ball.TrackGrabbing();
 
 			break;
 		}

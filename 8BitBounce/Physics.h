@@ -7,77 +7,6 @@
 
 class RigidObject
 {
-public:
-
-	void RigidBody(HWND windowHandle)
-	{
-		hWnd = windowHandle;
-
-		bodyX = centerW;
-		preBodyX = centerW;
-
-		RECT windowRect;
-		GetWindowRect(hWnd, &windowRect);
-		width = windowRect.right - windowRect.right;
-		height = windowRect.bottom - windowRect.top;
-	}
-
-	HWND GetWindowHandle()
-	{
-		return this->hWnd;
-	}
-
-	void SetPreCords()
-	{
-		preBodyX = bodyX;
-		preBodyY = bodyY;
-	}
-
-	void RunPhysics()
-	{
-		UpdatePosition();
-		ApplyGravity();
-		applyFriction();
-		BorderCollisions();
-		Draggable();
-
-		SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-	}
-
-	void GetDeltaTime(float dt)
-	{
-		this->deltaTime = dt;
-	}
-
-	void Grab()
-	{
-		POINT cursorPos;
-		GetCursorPos(&cursorPos);
-
-		// Update the button's pressed state
-		isDragging = TRUE;
-		bodyVx = 0;
-		bodyVy = 0;
-		gravity = 0;
-
-		// Set the capture to the window
-		SetCapture(hWnd);
-	}
-
-	void Ungrab()
-	{
-		// Update the button's pressed state
-		isDragging = FALSE;
-		gravity = 3;
-
-		// Calculates the velocity on release aka isDraggin = false
-		bodyVx = (bodyX - preBodyX) * 50;
-		bodyVy = (bodyY - preBodyY) * 50;
-
-		// Release the capture
-		ReleaseCapture();
-	}
-
 private:
 
 	HWND hWnd;
@@ -175,6 +104,12 @@ private:
 		}
 	}
 
+	void SetPreCords()
+	{
+		preBodyX = bodyX;
+		preBodyY = bodyY;
+	}
+
 	void Draggable()
 	{
 		POINT cursorPos;
@@ -202,4 +137,82 @@ private:
 			return 0;
 		}
 	}
+
+	public:
+
+		void RigidBody(HWND windowHandle)
+		{
+			hWnd = windowHandle;
+
+			bodyX = centerW;
+			preBodyX = centerW;
+
+			RECT windowRect;
+			GetWindowRect(hWnd, &windowRect);
+			width = windowRect.right - windowRect.right;
+			height = windowRect.bottom - windowRect.top;
+		}
+
+		HWND GetWindowHandle()
+		{
+			return this->hWnd;
+		}
+
+		void RunPhysics()
+		{
+			UpdatePosition();
+			SetPreCords();
+			ApplyGravity();
+			applyFriction();
+			BorderCollisions();
+			Draggable();
+
+			SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+		}
+
+		void GetDeltaTime(float dt)
+		{
+			this->deltaTime = dt;
+		}
+
+		void Grab()
+		{
+			POINT cursorPos;
+			GetCursorPos(&cursorPos);
+
+			// Update the button's pressed state
+			isDragging = TRUE;
+			bodyVx = 0;
+			bodyVy = 0;
+			gravity = 0;
+
+			// Set the capture to the window
+			SetCapture(hWnd);
+		}
+
+		void TrackGrabbing()
+		{
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_LEAVE; // Specifies that we want a WM_MOUSELEAVE message when the mouse leaves
+			tme.hwndTrack = hWnd;
+			tme.dwHoverTime = HOVER_DEFAULT; // Not needed for WM_MOUSELEAVE but required to be set
+
+			TrackMouseEvent(&tme); // Call this function to start tracking
+		}
+
+		void Ungrab()
+		{
+			// Update the button's pressed state
+			isDragging = FALSE;
+			gravity = 3;
+
+			// Calculates the velocity on release aka isDraggin = false
+			bodyVx = (bodyX - preBodyX) * 50;
+			bodyVy = (bodyY - preBodyY) * 50;
+
+			// Release the capture
+			ReleaseCapture();
+		}
+
 };
