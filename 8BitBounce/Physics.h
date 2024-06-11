@@ -3,19 +3,99 @@
 
 #define SECOND_TO_MILISECOND 1000
 #define VELOCITY_THRESHOLD 10
+
+
 class RigidObject
 {
 public:
+
+	void RigidBody(HWND windowHandle)
+	{
+		hWnd = windowHandle;
+
+		bodyX = centerW;
+		preBodyX = centerW;
+
+		RECT windowRect;
+		GetWindowRect(hWnd, &windowRect);
+		width = windowRect.right - windowRect.right;
+		height = windowRect.bottom - windowRect.top;
+	}
+
+	HWND GetWindowHandle()
+	{
+		return this->hWnd;
+	}
+
+	void SetPreCords()
+	{
+		preBodyX = bodyX;
+		preBodyY = bodyY;
+	}
+
+	void RunPhysics()
+	{
+		UpdatePosition();
+		ApplyGravity();
+		applyFriction();
+		BorderCollisions();
+		Draggable();
+
+		SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	}
+
+	void GetDeltaTime(float dt)
+	{
+		this->deltaTime = dt;
+	}
+
+	void Grab()
+	{
+		POINT cursorPos;
+		GetCursorPos(&cursorPos);
+
+		// Update the button's pressed state
+		isDragging = TRUE;
+		bodyVx = 0;
+		bodyVy = 0;
+		gravity = 0;
+
+		// Set the capture to the window
+		SetCapture(hWnd);
+	}
+
+	void Ungrab()
+	{
+		// Update the button's pressed state
+		isDragging = FALSE;
+		gravity = 3;
+
+		// Calculates the velocity on release aka isDraggin = false
+		bodyVx = (bodyX - preBodyX) * 50;
+		bodyVy = (bodyY - preBodyY) * 50;
+
+		// Release the capture
+		ReleaseCapture();
+	}
+
+private:
+
 	HWND hWnd;
+	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	int taskbarHeight = GetTaskbarHeight();
+	int centerW = screenWidth / 2;
+	int centerH = screenHeight / 2;
 
 	int width;
 	int height;
+	float deltaTime = 0;
 
 	// Body x,y cords
 	float bodyX = centerW;
 	float bodyY = centerH;
 	bool isGrounded;
-
+	bool isDragging = false;
 	// Previous body x,y cords
 	float preBodyX;
 	float preBodyY;
@@ -33,22 +113,6 @@ public:
 
 	float bodyRadius = width / 2;
 
-	void RigidBody(HWND windowHandle)
-	{
-		hWnd = windowHandle;
-	}
-
-	HWND GetWindowHandle()
-	{
-		return this->hWnd;
-	}
-
-	void SetPreCords()
-	{
-		preBodyX = bodyX;
-		preBodyY = bodyY;
-	}
-
 	void UpdatePosition()
 	{
 		bodyX += (bodyVx * deltaTime);
@@ -56,7 +120,7 @@ public:
 	    isGrounded = bodyY + height >= screenHeight - taskbarHeight - 1;
 	}
 
-	void ApplyGravity(float deltaTime)
+	void ApplyGravity()
 	{
 		if (!isGrounded)
 		{
@@ -72,6 +136,12 @@ public:
 		}
 	}
 
+	void applyFriction()
+	{
+		bodyVx *= friction;
+		bodyVy *= friction;
+	}
+
 	void BorderCollisions()
 	{
 		// Collision with left and right of screen
@@ -79,15 +149,13 @@ public:
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = screenWidth - width; // Prevents the body from getting stuck right to the screen
-			changeColorRandomly();
 			InvalidateRect(hWnd, NULL, NULL);
 			RedrawWindow(hWnd, NULL, 0, 0);
 		}
 		if (bodyX < 0)
 		{
-			ballVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
+			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = 0; // Prevents the body from getting stuck left to the screen
-			changeColorRandomly();
 			InvalidateRect(hWnd, NULL, NULL);
 			RedrawWindow(hWnd, NULL, 0, 0);
 		}
@@ -102,7 +170,6 @@ public:
 		{
 			bodyVy = -(bodyVy * dampingFactor * restitution);
 			bodyY = 0; // Prevents the body from getting stuck above the screen
-			changeColorRandomly();
 			InvalidateRect(hWnd, NULL, NULL);
 			RedrawWindow(hWnd, NULL, 0, 0);
 		}
@@ -114,8 +181,25 @@ public:
 		GetCursorPos(&cursorPos);
 		if (isDragging)
 		{
-			ballX = cursorPos.x - ballRadius;
-			ballY = cursorPos.y - ballRadius;
+			bodyX = cursorPos.x - bodyRadius;
+			bodyY = cursorPos.y - bodyRadius;
+		}
+	}
+
+	int GetTaskbarHeight()
+	{
+		APPBARDATA abd;
+		memset(&abd, 0, sizeof(abd));
+		abd.cbSize = sizeof(abd);
+
+		if (SHAppBarMessage(ABM_GETTASKBARPOS, &abd))
+		{
+			return abd.rc.bottom - abd.rc.top;
+		}
+		else
+		{
+			// If the function fails, return a default value (e.g., 0)
+			return 0;
 		}
 	}
 };

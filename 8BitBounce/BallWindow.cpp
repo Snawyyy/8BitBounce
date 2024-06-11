@@ -17,23 +17,7 @@ int blue;
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
 
-// Ball x,y cords
-float ballX = centerW;
-float ballY = centerH;
-
-// velocity
-float ballVx = 200; // Initial horizontal velocity
-float ballVy = 0; // Initial vertical velocity
-
-// Previous ball x,y cords
-float preBallx;
-float preBally;
-
-float ballAccY = 3; // Gravity (vertical acceleration)
-float ballRadius = width / 2;
-float friction = 0.99f;
-float dampingFactor = 0.85f; // damping factor for energy loss on bounce.
-float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
+RigidObject ball;
 
 // Delta time calculations variables
 
@@ -61,8 +45,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			// Creates a solid brush for the button background color
 			hBrush = CreateSolidBrush(RGB(red, green, blue)); // Change the RGB values to set your desired background color
-			ballX = centerW;
-			preBallx = centerW;
+			ball.RigidBody(hWnd);
 
 			lastTime = GetTickCount();
 
@@ -87,81 +70,12 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			if (wParam == TIMER_ID)
 			{
-
 				currentTime = GetTickCount64();
 				deltaTime = (currentTime - lastTime) / 1000.0f;
 				lastTime = currentTime;
 
-				preBallx = ballX;
-				preBally = ballY;
-
-				// Update the ball's position
-				ballX += (ballVx * deltaTime);
-				ballY += (ballVy * deltaTime);
-
-				bool isGrounded = ballY + height >= screenHeight - taskbarHeight - 1;
-				if (!isGrounded)
-				{
-					ballVy += (ballAccY * deltaTime) * 1000;
-				}
-				else
-				{
-					if ((ballVy < 10 && ballVy > -10))
-					{
-						ballVy = (ballVy * friction / (10 / ballVy));
-					}
-					ballVx *= friction;
-				}
-
-				// Apply friction more effectively
-				ballVx *= friction;
-				ballVy *= friction;
-
-
-				// Collision with left and right of screen
-				if (ballX + width > screenWidth)
-				{
-					ballVx = -(ballVx * dampingFactor * restitution); // Apply friction and restitution on bounce
-					ballX = screenWidth - width; // Prevents the ball from getting stuck right to the screen
-					changeColorRandomly();
-					InvalidateRect(hWnd, NULL, NULL);
-					RedrawWindow(hWnd, NULL, 0, 0);
-				}
-				if (ballX < 0)
-				{
-					ballVx = -(ballVx * dampingFactor * restitution); // Apply friction and restitution on bounce
-					ballX = 0; // Prevents the ball from getting stuck left to the screen
-					changeColorRandomly();
-					InvalidateRect(hWnd, NULL, NULL);
-					RedrawWindow(hWnd, NULL, 0, 0);
-				}
-
-				// Collision with top and bottom of screen
-				if (ballY + height > screenHeight - taskbarHeight)
-				{
-					ballVy = -(ballVy * dampingFactor * restitution);
-					ballY = screenHeight - taskbarHeight - height ; // Prevents the ball from getting stuck below the screen
-				}
-				if (ballY < 0)
-				{
-					ballVy = -(ballVy * dampingFactor * restitution);
-					ballY = 0; // Prevents the ball from getting stuck above the screen
-					changeColorRandomly();
-					InvalidateRect(hWnd, NULL, NULL);
-					RedrawWindow(hWnd, NULL, 0, 0);
-				}
-
-				POINT cursorPos;
-				GetCursorPos(&cursorPos);
-				if (isDragging)
-				{
-					ballX = cursorPos.x - ballRadius;
-					ballY = cursorPos.y - ballRadius;
-					// Optionally reset velocities to 0 or apply some logic to handle dragging behavior
-				}
-
-				SetWindowPos(hWnd, NULL, ballX, ballY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-				// InvalidateRect(hWnd, NULL, TRUE); // If needed, force the window to redraw
+				ball.GetDeltaTime(deltaTime);
+				ball.RunPhysics();
 			}
 			break;
 		}
@@ -217,34 +131,13 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			break;
 		}
 		case WM_LBUTTONDOWN:
-			{
-			POINT cursorPos;
-			GetCursorPos(&cursorPos);
-
-			// Update the button's pressed state
-			isDragging = TRUE;
-			ballVx = 0;
-			ballVy = 0;
-			ballAccY = 0;
-
-			// Set the capture to the window
-			SetCapture(hWnd);
-
+		{
+			ball.Grab();
 			break;
-			}
+		}
 		case WM_LBUTTONUP:
-			{
-			// Update the button's pressed state
-			isDragging = FALSE;
-			ballAccY = 3;
-
-			// Calculates the velocity on release aka isDraggin = false
-			ballVx = (ballX - preBallx) * 50;
-			ballVy = (ballY - preBally) * 50;
-
-			// Release the capture
-			ReleaseCapture();
-
+		{
+			ball.Ungrab();
 			break;
 		}
 		case WM_DESTROY:
