@@ -26,5 +26,8 @@
     <ClInclude Include="BallWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
