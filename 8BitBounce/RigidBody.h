@@ -183,11 +183,15 @@ public:
 	{
 		// Update the button's pressed state
 		isDragging = FALSE;
-		gravity = 3;
 
-		// Calculates the velocity on release aka isDraggin = false
-		bodyVx = (bodyX - preBodyX) * 50;
-		bodyVy = (bodyY - preBodyY) * 50;
+		// Calculate the velocity from the change in position
+		float velocityScaleFactor = 50.0f; // Adjust this value as needed
+		bodyVx = (bodyX - preBodyX) * velocityScaleFactor;
+		bodyVy = (bodyY - preBodyY) * velocityScaleFactor;
+
+		// Apply an impulse force based on the calculated velocity
+		force.x += bodyVx * mass;
+		force.y += bodyVy * mass;
 
 		// Release the capture
 		ReleaseCapture();
