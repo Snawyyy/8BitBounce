@@ -54,9 +54,7 @@ private:
 
 	void ApplyGravity()
 	{
-		if (!isGrounded)
-		{
-			bodyVy += (gravity * this->deltaTime) * SECOND_TO_MILISECOND;
+		force.y += gravity * mass * SECOND_TO_MILISECOND;
 		}
 	}
 
