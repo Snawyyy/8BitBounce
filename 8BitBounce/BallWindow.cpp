@@ -9,7 +9,6 @@
 	int green;
 	int blue;
 
-
 	// Delta time calculations variables
 	DWORD lastTime = 0;
 	DWORD currentTime = 0;
@@ -26,6 +25,8 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	static RECT rect;
 	PAINTSTRUCT ps;
 	HDC hdc;
+
+	bool timerRunning = false;
 	if (!IsWindow(ball.GetWindowHandle()))
 	{
 		ball.SetWindowHandle(hWnd);
@@ -59,6 +60,11 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	case WM_TIMER:
 	{
+		if (timerRunning == false)
+		{
+			timerRunning = true;
+		}
+
 		if (wParam == TIMER_ID)
 		{
 			currentTime = GetTickCount64();
@@ -118,6 +124,20 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_LBUTTONDOWN:
 	{
 		ball.Grab();
+		if (timerRunning == false)
+		{
+			SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
+		}
+
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		KillTimer(hWnd, 1);
+		if (timerRunning == true)
+		{
+			timerRunning = false;
+		}
 		break;
 	}
 	case WM_LBUTTONUP:
