@@ -56,7 +56,6 @@ private:
 	{
 		force.y += gravity * mass * SECOND_TO_MILISECOND;
 		}
-	}
 
 	void applyFriction()
 	{
@@ -64,12 +63,6 @@ private:
 		force.x += frictionForce.x;
 		force.y += frictionForce.y;
 		}
-		else
-		{
-			bodyVx *= friction;
-			bodyVy *= friction;
-		}
-	}
 
 	void BorderCollisions()
 	{
