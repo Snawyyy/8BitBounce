@@ -146,7 +146,6 @@ public:
 	void RunPhysics() override
 	{
 		UpdatePosition();
-		SetPreCords();
 		ApplyGravity();
 		applyFriction();
 		BorderCollisions();
