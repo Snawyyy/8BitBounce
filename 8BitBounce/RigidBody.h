@@ -1,13 +1,17 @@
 #pragma once
 #include "Physics.h"
+struct Vector2
+{
+	float forceX;
+	float forceY;
+};
 
 class RigidBody : public Physics
 {
 private:
 
-	// Body x,y cords
-	float bodyX = centerW;
-	float bodyY = centerH;
+	float mass = 1.0f; // Mass of the rigid body
+	Vector2 force = { 0.0f, 0.0f };
 
 	bool isGrounded = false;
 	bool isDragging = false;
@@ -21,16 +25,17 @@ private:
 	float bodyVx = 0; // Initial horizontal velocity
 	float bodyVy = 0; // Initial vertical velocity
 
-	float gravity = 3; // Gravity (vertical acceleration)
+	float gravity = 9.8; // Gravity (vertical acceleration)
 	float friction = 0.98f;
+	float staticFriction = 0.8f;
 	float dampingFactor = 0.8f; // damping factor for energy loss on bounce.
 	float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
 
 
 	void UpdatePosition()
 	{
-		bodyX += (bodyVx * this->time);
-		bodyY += (bodyVy * this->time);
+		bodyX += (bodyVx * this->deltaTime);
+		bodyY += (bodyVy * this->deltaTime);
 		isGrounded = bodyY + height >= screenHeight - taskbarHeight;
 	}
 
@@ -38,22 +43,25 @@ private:
 	{
 		if (!isGrounded)
 		{
-			bodyVy += (gravity * this->time) * SECOND_TO_MILISECOND;
-		}
-		else
-		{
-			if ((bodyVy < VELOCITY_THRESHOLD && bodyVy > -VELOCITY_THRESHOLD))
-			{
-				bodyVy = (bodyVy * friction / (VELOCITY_THRESHOLD / bodyVy));
-			}
-			bodyVx *= friction;
+			bodyVy += (gravity * this->deltaTime) * SECOND_TO_MILISECOND;
 		}
 	}
 
 	void applyFriction()
 	{
-		bodyVx *= friction;
-		bodyVy *= friction;
+		if (bodyVy < 10 && bodyVy > -10)
+		{
+			bodyVy *= staticFriction;
+		}
+		if (bodyVx < 10 && bodyVx > -10)
+		{
+			bodyVx *= staticFriction;
+		}
+		else
+		{
+			bodyVx *= friction;
+			bodyVy *= friction;
+		}
 	}
 
 	void BorderCollisions()
@@ -63,15 +71,11 @@ private:
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = screenWidth - width; // Prevents the body from getting stuck right to the screen
-			InvalidateRect(hWnd, NULL, NULL);
-			RedrawWindow(hWnd, NULL, 0, 0);
 		}
 		if (bodyX < 0)
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = 0; // Prevents the body from getting stuck left to the screen
-			InvalidateRect(hWnd, NULL, NULL);
-			RedrawWindow(hWnd, NULL, 0, 0);
 		}
 
 		// Collision with top and bottom of screen
@@ -84,8 +88,6 @@ private:
 		{
 			bodyVy = -(bodyVy * dampingFactor * restitution);
 			bodyY = 0; // Prevents the body from getting stuck above the screen
-			InvalidateRect(hWnd, NULL, NULL);
-			RedrawWindow(hWnd, NULL, 0, 0);
 		}
 	}
 
@@ -125,6 +127,10 @@ private:
 
 public:
 
+	// Body x,y cords
+	float bodyX = centerW;
+	float bodyY = centerH;
+
 	RigidBody(HWND windowHandle):Physics(windowHandle)
 	{
 		bodyX = centerW;
@@ -140,8 +146,6 @@ public:
 		applyFriction();
 		BorderCollisions();
 		Draggable();
-
-		SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
 	
 	void Grab()

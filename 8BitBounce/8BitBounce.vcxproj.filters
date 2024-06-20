@@ -53,5 +53,8 @@
     <ClInclude Include="UiSettings.h">
       <Filter>Header Files\Ui</Filter>
     </ClInclude>
+    <ClInclude Include="WindowPhysics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

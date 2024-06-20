@@ -1,7 +1,7 @@
 #include "WorldWindow.h"
 
 void CreateWindowThread() {
-	Window* pWindow = new Window();
+	Window* pWindow = new Window(100, 100);
 	pWindow->Show();
 	pWindow->ProcessMessages();
 	delete pWindow;
@@ -26,6 +26,7 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	{
 		std::thread windowThread(CreateWindowThread);
 		windowThread.detach();
+
 
 		HWND button = CreateWindowA("BUTTON",
 			"Test",

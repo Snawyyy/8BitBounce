@@ -139,6 +139,7 @@
     <ClInclude Include="Ui.h" />
     <ClInclude Include="UiElements.h" />
     <ClInclude Include="UiSettings.h" />
+    <ClInclude Include="WindowPhysics.h" />
     <ClInclude Include="WorldWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
