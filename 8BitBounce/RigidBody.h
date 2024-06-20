@@ -55,14 +55,14 @@ private:
 	void ApplyGravity()
 	{
 		force.y += gravity * mass * SECOND_TO_MILISECOND;
-		}
+	}
 
-	void applyFriction()
+	void ApplyFriction()
 	{
 		Vector2 frictionForce = Vector2{ - bodyVx * friction, -bodyVy * friction};
 		force.x += frictionForce.x;
 		force.y += frictionForce.y;
-		}
+	}
 
 	void BorderCollisions()
 	{
@@ -140,7 +140,7 @@ public:
 	{
 		UpdatePosition();
 		ApplyGravity();
-		applyFriction();
+		ApplyFriction();
 		BorderCollisions();
 		Draggable();
 	}
