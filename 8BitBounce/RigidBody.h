@@ -60,13 +60,9 @@ private:
 
 	void applyFriction()
 	{
-		if (bodyVy < 10 && bodyVy > -10)
-		{
-			bodyVy *= staticFriction;
-		}
-		if (bodyVx < 10 && bodyVx > -10)
-		{
-			bodyVx *= staticFriction;
+		Vector2 frictionForce = Vector2{ - bodyVx * friction, -bodyVy * friction};
+		force.x += frictionForce.x;
+		force.y += frictionForce.y;
 		}
 		else
 		{
