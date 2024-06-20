@@ -102,12 +102,6 @@ private:
 		}
 	}
 
-	void SetPreCords()
-	{
-		preBodyX = bodyX;
-		preBodyY = bodyY;
-	}
-
 	void Draggable()
 	{
 		POINT cursorPos;
