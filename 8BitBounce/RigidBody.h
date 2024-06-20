@@ -144,7 +144,13 @@ public:
 		BorderCollisions();
 		Draggable();
 	}
-	
+
+	void ApplyForce(float addForceX, float addForceY)
+	{
+		force.x += addForceX;
+		force.y += addForceY;
+	}
+
 	void Grab()
 	{
 		POINT cursorPos;
