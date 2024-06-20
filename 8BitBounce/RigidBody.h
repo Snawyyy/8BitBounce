@@ -28,7 +28,7 @@ private:
 	float gravity = 9.8; // Gravity (vertical acceleration)
 	float friction = 0.98f;
 	float staticFriction = 0.8f;
-	float dampingFactor = 0.8f; // damping factor for energy loss on bounce.
+	float dampingFactor = 0.9f; // damping factor for energy loss on bounce.
 	float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
 
 
