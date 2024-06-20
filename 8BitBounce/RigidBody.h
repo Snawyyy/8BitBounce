@@ -10,9 +10,6 @@ class RigidBody : public Physics
 {
 private:
 
-	float mass = 1.0f; // Mass of the rigid body
-	Vector2 force = { 0.0f, 0.0f };
-
 	bool isGrounded = false;
 	bool isDragging = false;
 	POINT clickOffset;
@@ -128,6 +125,8 @@ public:
 	// Body x,y cords
 	float bodyX = centerW;
 	float bodyY = centerH;
+	float mass = 1.0f; // Mass of the rigid body
+	Vector2 force = { 0.0f, 0.0f };
 
 	RigidBody(HWND windowHandle):Physics(windowHandle)
 	{
