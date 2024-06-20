@@ -34,9 +34,22 @@ private:
 
 	void UpdatePosition()
 	{
-		bodyX += (bodyVx * this->deltaTime);
-		bodyY += (bodyVy * this->deltaTime);
-		isGrounded = bodyY + height >= screenHeight - taskbarHeight;
+		preBodyX = bodyX;
+		preBodyY = bodyY;
+
+		// Calculate acceleration from the applied force
+		Vector2 acceleration = { force.x / mass, force.y / mass};
+
+		// Update velocity based on acceleration
+		bodyVx += acceleration.x * deltaTime;
+		bodyVy += acceleration.y * deltaTime;
+
+		// Update position based on velocity
+		bodyX += bodyVx * deltaTime;
+		bodyY += bodyVy * deltaTime;
+
+		// Reset the applied force after updating the position
+		force = Vector2{ 0.0f, 0.0f };
 	}
 
 	void ApplyGravity()
