@@ -129,10 +129,17 @@
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp" />
     <ClCompile Include="BallWindow.cpp" />
+    <ClCompile Include="WorldWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BallWindow.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="Ui.h" />
+    <ClInclude Include="UiElements.h" />
+    <ClInclude Include="UiSettings.h" />
+    <ClInclude Include="WorldWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

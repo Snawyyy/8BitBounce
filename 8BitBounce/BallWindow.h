@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
-#include "Physics.h"
+#include "RigidBody.h"
+#include "WorldWindow.h"
 
 class Window
 {
@@ -8,9 +9,11 @@ public:
 	Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
+	void Show();
+
 	~Window();
 
-	bool ProcessMessages();
+	void ProcessMessages();
 
 private:
 	HINSTANCE m_hinstance;

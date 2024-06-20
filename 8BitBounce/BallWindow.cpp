@@ -1,7 +1,6 @@
 #include "BallWindow.h"
 
 // Global variables
-
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int taskbarHeight = GetTaskbarHeight();
@@ -13,18 +12,14 @@ int red;
 int green;
 int blue;
 
-
 int centerW = screenWidth / 2;
 int centerH = screenHeight / 2;
-
-RigidObject ball;
+RigidBody ball (nullptr);
 
 // Delta time calculations variables
-
 DWORD lastTime = 0;
 DWORD currentTime = 0;
 float deltaTime = 0;
-
 
 // Timer ID
 const int TIMER_ID = 1;
@@ -36,6 +31,10 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		static RECT rect;
 		PAINTSTRUCT ps;
 		HDC hdc;
+		if (!IsWindow(ball.GetWindowHandle()))
+		{
+			ball.SetWindowHandle(hWnd);
+		}
 
 		switch (uMsg)
 		{
@@ -43,11 +42,10 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			// Creates a solid brush for the button background color
 			hBrush = CreateSolidBrush(RGB(red, green, blue)); // Change the RGB values to set your desired background color
-			ball.RigidBody(hWnd);
 
-			lastTime = GetTickCount();
+			lastTime = GetTickCount64();
 
-			SetTimer(hWnd, TIMER_ID, 16, NULL); // 16ms interval (approximately 60 FPS)
+			SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
 
 
 			break;
@@ -93,7 +91,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			// Combine the regions to create a ring shape
 			CombineRgn(outerRgn, outerRgn, innerRgn, RGN_DIFF);
 			// Set the brush color for the outer ring
-			HBRUSH outerBrush = CreateSolidBrush(RGB(0,0,0));
+			HBRUSH outerBrush = CreateSolidBrush(RGB(100,0,0));
 			SelectObject(hdc, outerBrush);
 
 			// Fill the outer ring
@@ -162,11 +160,12 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
 	wndClass.hbrBackground = CreateSolidBrush(RGB(0,0,0));
 	RegisterClass(&wndClass);
 
-	DWORD style = WS_POPUP | WS_CLIPCHILDREN;
+	DWORD style = WS_POPUP | WS_CHILD;
 
+	HWND worldWindowHandle = FindWindow(NULL, L"World_Window");
 
 	m_hWnd = CreateWindowEx(
-		0,
+		WS_EX_TOPMOST,
 		CLASS_NAME,
 		L"Ball",
 		style,
@@ -174,7 +173,7 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
 		CW_USEDEFAULT,
 		width,
 		height,
-		NULL,
+		worldWindowHandle,
 		NULL,
 		m_hinstance,
 		NULL
@@ -184,6 +183,10 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
 
 }
 
+void Window::Show()
+{
+	ShowWindow(m_hWnd, SW_SHOW);
+}
 Window::~Window()
 {
 	const wchar_t* CLASS_NAME = L"Snawy's Window Class";
@@ -191,22 +194,13 @@ Window::~Window()
 	UnregisterClass(CLASS_NAME, m_hinstance);
 }
 
-bool Window::ProcessMessages()
+void Window::ProcessMessages()
 {
-	MSG msg = {};
-
-	while (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE))
-	{
-		if (msg.message == WM_QUIT)
-		{
-			return false;
-		}
-
+	MSG msg = { };
+	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-
 	}
-	return true;
 }
 
 int GetTaskbarHeight()
