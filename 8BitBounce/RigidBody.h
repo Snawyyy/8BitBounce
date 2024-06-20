@@ -78,11 +78,13 @@ private:
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = screenWidth - width; // Prevents the body from getting stuck right to the screen
+			force.x -= 2.0f * bodyVx * mass; // Apply impulse force
 		}
 		if (bodyX < 0)
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = 0; // Prevents the body from getting stuck left to the screen
+			force.x -= 2.0f * bodyVx * mass; // Apply impulse force
 		}
 
 		// Collision with top and bottom of screen
@@ -90,11 +92,13 @@ private:
 		{
 			bodyVy = -(bodyVy * dampingFactor * restitution);
 			bodyY = screenHeight - taskbarHeight - height; // Prevents the body from getting stuck below the screen
+			force.y -= 2.0f * bodyVy * mass; // Apply impulse force
 		}
 		if (bodyY < 0)
 		{
 			bodyVy = -(bodyVy * dampingFactor * restitution);
 			bodyY = 0; // Prevents the body from getting stuck above the screen
+			force.y -= 2.0f * bodyVy * mass; // Apply impulse force
 		}
 	}
 
