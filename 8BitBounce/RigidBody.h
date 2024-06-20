@@ -2,8 +2,8 @@
 #include "Physics.h"
 struct Vector2
 {
-	float forceX;
-	float forceY;
+	float x;
+	float y;
 };
 
 class RigidBody : public Physics
