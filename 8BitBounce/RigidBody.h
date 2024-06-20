@@ -158,15 +158,12 @@ public:
 		GetCursorPos(&cursorPos);
 		clickOffset.x = cursorPos.x - bodyX;
 		clickOffset.y = cursorPos.y - bodyY;
-
-		// Update the button's pressed state
 		isDragging = TRUE;
 
 		// Apply an impulse force to cancel out the existing velocity
 		force.x -= bodyVx * mass;
 		force.y -= bodyVy * mass;
 
-		// Set the capture to the window
 		SetCapture(hWnd);
 		UpdateSize();
 	}
