@@ -9,16 +9,6 @@
 	int green;
 	int blue;
 
-	// Delta time calculations variables
-	DWORD lastTime = 0;
-	DWORD currentTime = 0;
-	float deltaTime = 0;
-
-	// Timer ID
-	const int TIMER_ID = 1;
-
-	WindowPhysics ball(nullptr);
-
 LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	static HBRUSH hBrush = NULL;
@@ -26,26 +16,36 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-	bool timerRunning = false;
-	if (!IsWindow(ball.GetWindowHandle()))
-	{
-		ball.SetWindowHandle(hWnd);
-	}
+	const int TIMER_ID = 1;
 
-	switch (uMsg)
+	WindowPhysics* pBall = nullptr;
+
+
+
+	if (uMsg == WM_CREATE)
 	{
-	case WM_CREATE:
-	{
+		// Create the WindowPhysics object and associate it with the window
+		pBall = new WindowPhysics(hWnd);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pBall));
+
 		// Creates a solid brush for the button background color
 		hBrush = CreateSolidBrush(RGB(red, green, blue)); // Change the RGB values to set your desired background color
 
-		lastTime = GetTickCount64();
+		pBall->lastTime = GetTickCount64();
 
 		SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
 
-
-		break;
 	}
+	else
+	{
+		// Retrieve the WindowPhysics object associated with the window
+		pBall = reinterpret_cast<WindowPhysics*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
+	bool timerRunning = false;
+
+	switch (uMsg)
+	{
 	case WM_SIZE:
 	{
 		// Stores the button's client area dimensions
@@ -60,19 +60,14 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	case WM_TIMER:
 	{
-		if (timerRunning == false)
-		{
-			timerRunning = true;
-		}
 
 		if (wParam == TIMER_ID)
 		{
-			currentTime = GetTickCount64();
-			deltaTime = (currentTime - lastTime) / 1000.0f;
-			lastTime = currentTime;
+			pBall->currentTime = GetTickCount64();
+			pBall->deltaTime = (pBall->currentTime - pBall->lastTime) / 1000.0f;
+			pBall->lastTime = pBall->currentTime;
 
-			ball.GetDeltaTime(deltaTime);
-			ball.RunPhysics();
+			pBall->RunPhysics();
 		}
 		break;
 	}
@@ -117,32 +112,38 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	case WM_MOUSEMOVE:
 	{
-		ball.TrackGrabbing();
+		pBall->TrackGrabbing();
 
 		break;
 	}
 	case WM_LBUTTONDOWN:
 	{
-		ball.Grab();
+		pBall->Grab();
+		SendMessage(hWnd, WM_USER + 2, 0, 0);
+		break;
+	}
+	case WM_USER + 2:
+	{
 		if (timerRunning == false)
 		{
 			SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
-		}
-
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		KillTimer(hWnd, 1);
-		if (timerRunning == true)
-		{
-			timerRunning = false;
+			pBall->lastTime = GetTickCount64();
 		}
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
-		ball.Ungrab();
+		pBall->Ungrab();
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		if (timerRunning == true)
+		{
+			timerRunning = false;
+		}
+		KillTimer(hWnd, 1);
+		DropDownOptions(hWnd);
 		break;
 	}
 	case WM_DESTROY:

@@ -23,11 +23,13 @@ private:
 	float bodyVy = 0; // Initial vertical velocity
 
 	float gravity = 9.8; // Gravity (vertical acceleration)
-	float friction = 0.98f;
-	float staticFriction = 0.8f;
+	float friction = 0.4f;
+	float staticFriction = 0.5f;
 	float dampingFactor = 0.9f; // damping factor for energy loss on bounce.
 	float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
-
+	const double G = 6.67430e-11;  // gravitational constant in m^3 kg^-1 s^-2
+	const double EARTH_MASS = 5.9722e24;  // mass of the Earth in kg
+	const double EARTH_RADIUS = 6.371e6;  // radius of the Earth in meters
 
 	void UpdatePosition()
 	{
@@ -49,9 +51,15 @@ private:
 		force = Vector2{ 0.0f, 0.0f };
 	}
 
-	void ApplyGravity()
+	void ApplyWorldGravity()
 	{
 		force.y += gravity * mass * SECOND_TO_MILISECOND;
+	}
+
+	void ApplyGravity(double m1, double m2, double r)
+	{
+		force.y += G * (m1 * m2) / (r * r) * SECOND_TO_MILISECOND;
+
 	}
 
 	void ApplyFriction()
@@ -138,7 +146,7 @@ public:
 	void RunPhysics() override
 	{
 		UpdatePosition();
-		ApplyGravity();
+		ApplyGravity(mass, EARTH_MASS, EARTH_RADIUS);
 		ApplyFriction();
 		BorderCollisions();
 		Draggable();
