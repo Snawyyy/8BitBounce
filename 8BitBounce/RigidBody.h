@@ -1,13 +1,14 @@
 #pragma once
 #include "Physics.h"
+struct Vector2
+{
+	float x;
+	float y;
+};
 
 class RigidBody : public Physics
 {
 private:
-
-	// Body x,y cords
-	float bodyX = centerW;
-	float bodyY = centerH;
 
 	bool isGrounded = false;
 	bool isDragging = false;
@@ -21,39 +22,43 @@ private:
 	float bodyVx = 0; // Initial horizontal velocity
 	float bodyVy = 0; // Initial vertical velocity
 
-	float gravity = 3; // Gravity (vertical acceleration)
+	float gravity = 9.8; // Gravity (vertical acceleration)
 	float friction = 0.98f;
-	float dampingFactor = 0.8f; // damping factor for energy loss on bounce.
+	float staticFriction = 0.8f;
+	float dampingFactor = 0.9f; // damping factor for energy loss on bounce.
 	float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
 
 
 	void UpdatePosition()
 	{
-		bodyX += (bodyVx * this->time);
-		bodyY += (bodyVy * this->time);
-		isGrounded = bodyY + height >= screenHeight - taskbarHeight;
+		preBodyX = bodyX;
+		preBodyY = bodyY;
+
+		// Calculate acceleration from the applied force
+		Vector2 acceleration = { force.x / mass, force.y / mass};
+
+		// Update velocity based on acceleration
+		bodyVx += acceleration.x * deltaTime;
+		bodyVy += acceleration.y * deltaTime;
+
+		// Update position based on velocity
+		bodyX += bodyVx * deltaTime;
+		bodyY += bodyVy * deltaTime;
+
+		// Reset the applied force after updating the position
+		force = Vector2{ 0.0f, 0.0f };
 	}
 
 	void ApplyGravity()
 	{
-		if (!isGrounded)
-		{
-			bodyVy += (gravity * this->time) * SECOND_TO_MILISECOND;
-		}
-		else
-		{
-			if ((bodyVy < VELOCITY_THRESHOLD && bodyVy > -VELOCITY_THRESHOLD))
-			{
-				bodyVy = (bodyVy * friction / (VELOCITY_THRESHOLD / bodyVy));
-			}
-			bodyVx *= friction;
-		}
+		force.y += gravity * mass * SECOND_TO_MILISECOND;
 	}
 
-	void applyFriction()
+	void ApplyFriction()
 	{
-		bodyVx *= friction;
-		bodyVy *= friction;
+		Vector2 frictionForce = Vector2{ - bodyVx * friction, -bodyVy * friction};
+		force.x += frictionForce.x;
+		force.y += frictionForce.y;
 	}
 
 	void BorderCollisions()
@@ -63,15 +68,13 @@ private:
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = screenWidth - width; // Prevents the body from getting stuck right to the screen
-			InvalidateRect(hWnd, NULL, NULL);
-			RedrawWindow(hWnd, NULL, 0, 0);
+			force.x -= 2.0f * bodyVx * mass; // Apply impulse force
 		}
 		if (bodyX < 0)
 		{
 			bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
 			bodyX = 0; // Prevents the body from getting stuck left to the screen
-			InvalidateRect(hWnd, NULL, NULL);
-			RedrawWindow(hWnd, NULL, 0, 0);
+			force.x -= 2.0f * bodyVx * mass; // Apply impulse force
 		}
 
 		// Collision with top and bottom of screen
@@ -79,20 +82,14 @@ private:
 		{
 			bodyVy = -(bodyVy * dampingFactor * restitution);
 			bodyY = screenHeight - taskbarHeight - height; // Prevents the body from getting stuck below the screen
+			force.y -= 2.0f * bodyVy * mass; // Apply impulse force
 		}
 		if (bodyY < 0)
 		{
 			bodyVy = -(bodyVy * dampingFactor * restitution);
 			bodyY = 0; // Prevents the body from getting stuck above the screen
-			InvalidateRect(hWnd, NULL, NULL);
-			RedrawWindow(hWnd, NULL, 0, 0);
+			force.y -= 2.0f * bodyVy * mass; // Apply impulse force
 		}
-	}
-
-	void SetPreCords()
-	{
-		preBodyX = bodyX;
-		preBodyY = bodyY;
 	}
 
 	void Draggable()
@@ -125,6 +122,12 @@ private:
 
 public:
 
+	// Body x,y cords
+	float bodyX = centerW;
+	float bodyY = centerH;
+	float mass = 1.0f; // Mass of the rigid body
+	Vector2 force = { 0.0f, 0.0f };
+
 	RigidBody(HWND windowHandle):Physics(windowHandle)
 	{
 		bodyX = centerW;
@@ -135,30 +138,30 @@ public:
 	void RunPhysics() override
 	{
 		UpdatePosition();
-		SetPreCords();
 		ApplyGravity();
-		applyFriction();
+		ApplyFriction();
 		BorderCollisions();
 		Draggable();
-
-		SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
-	
+
+	void ApplyForce(float addForceX, float addForceY)
+	{
+		force.x += addForceX;
+		force.y += addForceY;
+	}
+
 	void Grab()
 	{
 		POINT cursorPos;
 		GetCursorPos(&cursorPos);
-
 		clickOffset.x = cursorPos.x - bodyX;
 		clickOffset.y = cursorPos.y - bodyY;
-
-		// Update the button's pressed state
 		isDragging = TRUE;
-		bodyVx = 0;
-		bodyVy = 0;
-		gravity = 0;
 
-		// Set the capture to the window
+		// Apply an impulse force to cancel out the existing velocity
+		force.x -= bodyVx * mass;
+		force.y -= bodyVy * mass;
+
 		SetCapture(hWnd);
 		UpdateSize();
 	}
@@ -178,11 +181,15 @@ public:
 	{
 		// Update the button's pressed state
 		isDragging = FALSE;
-		gravity = 3;
 
-		// Calculates the velocity on release aka isDraggin = false
-		bodyVx = (bodyX - preBodyX) * 50;
-		bodyVy = (bodyY - preBodyY) * 50;
+		// Calculate the velocity from the change in position
+		float velocityScaleFactor = 50.0f; // Adjust this value as needed
+		bodyVx = (bodyX - preBodyX) * velocityScaleFactor;
+		bodyVy = (bodyY - preBodyY) * velocityScaleFactor;
+
+		// Apply an impulse force based on the calculated velocity
+		force.x += bodyVx * mass;
+		force.y += bodyVy * mass;
 
 		// Release the capture
 		ReleaseCapture();

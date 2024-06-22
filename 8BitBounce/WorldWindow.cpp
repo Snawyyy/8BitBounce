@@ -1,7 +1,7 @@
 #include "WorldWindow.h"
 
 void CreateWindowThread() {
-	Window* pWindow = new Window();
+	Window* pWindow = new Window(100, 100);
 	pWindow->Show();
 	pWindow->ProcessMessages();
 	delete pWindow;
@@ -27,10 +27,11 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		std::thread windowThread(CreateWindowThread);
 		windowThread.detach();
 
+
 		HWND button = CreateWindowA("BUTTON",
 			"Test",
 			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, MARGIN, BUTTON_HEIGHT, BUTTON_HEIGHT,
+			0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT,
 			hWnd, (HMENU)QUIT_BUTTON_ID, NULL, NULL);
 
 		SetTimer(hWnd, 2, 8, NULL); // 16ms interval (approximately 60 FPS)

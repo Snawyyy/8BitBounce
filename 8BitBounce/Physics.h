@@ -30,10 +30,6 @@ protected:
 
 		virtual void UpdateSize()
 		{
-			RECT windowRect;
-			GetWindowRect(hWnd, &windowRect);
-			width = windowRect.right - windowRect.left;
-			height = windowRect.bottom - windowRect.top;
 		}
 
 	public:
@@ -47,7 +43,7 @@ protected:
 
 		int width;
 		int height;
-		float time = 0;
+		float deltaTime = 0;
 
 		Physics(HWND windowHandle)
 		{
@@ -77,6 +73,6 @@ protected:
 
 		void GetDeltaTime(float dt)
 		{
-			this->time = dt;
+			this->deltaTime = dt;
 		}
 };

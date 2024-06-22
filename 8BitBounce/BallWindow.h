@@ -1,12 +1,13 @@
 #pragma once
 #include <Windows.h>
-#include "RigidBody.h"
+#include "WindowPhysics.h"
 #include "WorldWindow.h"
 
 class Window
 {
 public:
-	Window();
+	Window(int width, int height);
+	
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	void Show();
