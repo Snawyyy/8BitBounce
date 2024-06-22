@@ -25,3 +25,4 @@ void SendUpdateTimeMessageToAllWindows(float deltaTime);
 
 #define WM_UPDATE_DELTA_TIME (WM_USER + 1)
 
+

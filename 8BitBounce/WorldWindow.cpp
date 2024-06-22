@@ -27,6 +27,9 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		std::thread windowThread(CreateWindowThread);
 		windowThread.detach();
 
+		std::thread awindowThread(CreateWindowThread);
+		awindowThread.detach();
+
 
 		HWND button = CreateWindowA("BUTTON",
 			"Test",

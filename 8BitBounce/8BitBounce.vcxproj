@@ -129,11 +129,13 @@
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp" />
     <ClCompile Include="BallWindow.cpp" />
+    <ClCompile Include="DropDownOptions.cpp" />
     <ClCompile Include="WorldWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BallWindow.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="DropDownOptions.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Ui.h" />

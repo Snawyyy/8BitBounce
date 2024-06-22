@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include "WindowPhysics.h"
 #include "WorldWindow.h"
+#include "DropDownOptions.h"
 
 class Window
 {

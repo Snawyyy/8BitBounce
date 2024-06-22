@@ -31,7 +31,7 @@
 #define WIN_BAR_SIZE SCREEN_HEIGHT / 30
 #define BAR_MARGIN  5
 #define BAR_BUTTON_SIZE  20
-#define BORDER_EFFECT_SIZE 4
+#define BORDER_EFFECT_SIZE 2
 
  // --Ui Settings-- //
 #define MARGIN  20

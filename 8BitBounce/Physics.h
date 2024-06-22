@@ -44,6 +44,8 @@ protected:
 		int width;
 		int height;
 		float deltaTime = 0;
+		DWORD lastTime;
+		DWORD currentTime;
 
 		Physics(HWND windowHandle)
 		{
@@ -69,10 +71,5 @@ protected:
 
 		void virtual RunPhysics()
 		{
-		}
-
-		void GetDeltaTime(float dt)
-		{
-			this->deltaTime = dt;
 		}
 };
