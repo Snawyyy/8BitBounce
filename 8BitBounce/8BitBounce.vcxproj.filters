@@ -16,6 +16,12 @@
     <Filter Include="Header Files\Ui">
       <UniqueIdentifier>{2f8f27a0-ab97-43d6-9acb-faba3f1b0054}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{a15f3836-6f4c-43b2-8ef9-3f09b29b3d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{b10c3d44-2078-4a98-a466-2970a2d731db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp">
@@ -27,15 +33,24 @@
     <ClCompile Include="WorldWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DropDownOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowPhysics.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BallWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WorldWindow.h">
@@ -53,8 +68,20 @@
     <ClInclude Include="UiSettings.h">
       <Filter>Header Files\Ui</Filter>
     </ClInclude>
-    <ClInclude Include="WindowPhysics.h">
+    <ClInclude Include="MemoryManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowPhysics.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="DropDownOptions.h">
+      <Filter>Header Files\Ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
