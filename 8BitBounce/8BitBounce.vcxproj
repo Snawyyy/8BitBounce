@@ -133,6 +133,7 @@
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="WindowIdManager.cpp" />
     <ClCompile Include="WindowPhysics.cpp" />
     <ClCompile Include="WorldWindow.cpp" />
   </ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="Ui.h" />
     <ClInclude Include="UiElements.h" />
     <ClInclude Include="UiSettings.h" />
+    <ClInclude Include="WindowIdManager.h" />
     <ClInclude Include="WindowPhysics.h" />
     <ClInclude Include="WorldWindow.h" />
   </ItemGroup>

@@ -48,6 +48,9 @@
     <ClCompile Include="MemoryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WindowIdManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BallWindow.h">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="DropDownOptions.h">
       <Filter>Header Files\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowIdManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
