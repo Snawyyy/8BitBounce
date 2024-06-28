@@ -53,5 +53,9 @@ public:
     void ApplyForce(float addForceX, float addForceY);
     void Grab();
     void TrackGrabbing();
-    void Ungrab();
+    void Ungrab();    
+    void CalculateCollisions();
+
+    int Clamp(int num, int min, int max);
+
 };

@@ -110,8 +110,14 @@ int RigidBody::GetTaskbarHeight()
     }
 }
 
+void RigidBody::CalculateCollisions()
+{
+    bodyVx = -(bodyVx * dampingFactor * restitution);
+}
+
 void RigidBody::RunPhysics()
 {
+    CalculateTime();
     UpdatePosition();
     ApplyGravity(mass, EARTH_MASS, EARTH_RADIUS);
     ApplyFriction();
@@ -168,4 +174,17 @@ void RigidBody::Ungrab()
 
     // Release the capture
     ReleaseCapture();
+}
+
+int RigidBody::Clamp(int num, int min, int max)
+{
+    if (num < min) {
+        return min;
+    }
+    else if (num > max) {
+        return max;
+    }
+    else {
+        return num;
+    }
 }
