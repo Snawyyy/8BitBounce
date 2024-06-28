@@ -19,7 +19,7 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	const int TIMER_ID = 1;
 
 	WindowPhysics* pBall = nullptr;
-
+	MemoryManager& worldObjects = MemoryManager::getInstance();
 
 
 	if (uMsg == WM_CREATE)
