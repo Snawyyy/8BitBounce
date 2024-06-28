@@ -63,10 +63,6 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 		if (wParam == TIMER_ID)
 		{
-			pBall->currentTime = GetTickCount64();
-			pBall->deltaTime = (pBall->currentTime - pBall->lastTime) / 1000.0f;
-			pBall->lastTime = pBall->currentTime;
-
 			pBall->RunPhysics();
 		}
 		break;

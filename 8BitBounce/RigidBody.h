@@ -32,6 +32,7 @@ private:
     const double EARTH_MASS = 5.9722e24;  // mass of the Earth in kg
     const double EARTH_RADIUS = 6.371e6;  // radius of the Earth in meters
 
+    void CalculateTime();
     void UpdatePosition();
     void ApplyWorldGravity();
     void ApplyGravity(double m1, double m2, double r);

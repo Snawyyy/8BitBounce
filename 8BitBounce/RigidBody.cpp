@@ -7,6 +7,13 @@ RigidBody::RigidBody(HWND windowHandle) : Physics(windowHandle)
     preBodyY = centerH;
 }
 
+void RigidBody::CalculateTime()
+{
+    currentTime = GetTickCount64();
+    deltaTime = (currentTime - lastTime) / 1000.0f;
+    lastTime = currentTime;
+}
+
 void RigidBody::UpdatePosition()
 {
     preBodyX = bodyX;
