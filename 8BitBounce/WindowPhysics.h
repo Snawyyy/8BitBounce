@@ -1,5 +1,7 @@
 #pragma once
 #include "RigidBody.h"
+#include "WindowIdManager.h"
+#include "MemoryManager.h"
 
 class WindowPhysics : public RigidBody
 {
@@ -14,6 +16,8 @@ public:
 
     void UpdateSize() override;
     void RunPhysics() override;
+    int GetId();
+
 
 private:
     UINT timerID;

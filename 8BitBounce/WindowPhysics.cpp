@@ -29,3 +29,9 @@ void WindowPhysics::RunPhysics()
     RigidBody::RunPhysics();
     SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
+
+int WindowPhysics::GetId()
+{
+    WindowIdManager& idManager = WindowIdManager::getInstance();
+    return idManager.getWindowId(hWnd);
+}
