@@ -13,13 +13,13 @@ MemoryManager::~MemoryManager()
     delete[] array;
 }
 
-void MemoryManager::allocateMemory(int size) 
+void MemoryManager::AllocateMemory(int size) 
 {
     array = new int[size];
     this->size = size;
 }
 
-void MemoryManager::initializeMemory() 
+void MemoryManager::InitializeMemory() 
 {
     for (int i = 0; i < size; ++i) 
     {
@@ -27,7 +27,7 @@ void MemoryManager::initializeMemory()
     }
 }
 
-void MemoryManager::printMemory() 
+void MemoryManager::PrintMemory() 
 {
     for (int i = 0; i < size; ++i) 
     {
@@ -36,14 +36,19 @@ void MemoryManager::printMemory()
     std::cout << std::endl;
 }
 
-void MemoryManager::deallocateMemory() 
+int MemoryManager::ReadMemory(int index)
+{
+    return array[index];
+}
+
+void MemoryManager::DeallocateMemory() 
 {
     delete[] array;
     array = nullptr;
     size = 0;
 }
 
-void MemoryManager::writeToMemory(int index, int value) 
+void MemoryManager::WriteToMemory(int index, int value) 
 {
     if (index >= 0 && index < size) 
     {

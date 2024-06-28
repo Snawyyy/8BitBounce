@@ -3,6 +3,7 @@
 #include "BallWindow.h"
 #include "UiElements.h"
 #include <thread>
+#include "MemoryManager.h"
 
 class WorldWindow
 {

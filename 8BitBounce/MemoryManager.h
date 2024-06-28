@@ -6,11 +6,12 @@ class MemoryManager {
 public:
     static MemoryManager& getInstance();
 
-    void allocateMemory(int size);
-    void initializeMemory();
-    void printMemory();
-    void deallocateMemory();
-    void writeToMemory(int index, int value);
+    void AllocateMemory(int size);
+    void InitializeMemory();
+    void PrintMemory();
+    int ReadMemory(int index);
+    void DeallocateMemory();
+    void WriteToMemory(int index, int value);
 
 private:
     MemoryManager();
