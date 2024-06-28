@@ -14,7 +14,6 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-
 	// Delta time calculations variables
 	DWORD lastTime = 0;
 	DWORD currentTime = 0;
@@ -146,6 +145,10 @@ WorldWindow::WorldWindow() : m_hinstance(GetModuleHandle(nullptr))
 		m_hinstance,
 		NULL
 	);
+
+	MemoryManager& worldObjects = MemoryManager::getInstance();
+	worldObjects.AllocateMemory(5000);
+	worldObjects.InitializeMemory();
 
 	SetLayeredWindowAttributes(m_hWnd, RGB(0,0,0), (255 * 30) / 100, LWA_COLORKEY);
 	ShowWindow(m_hWnd, SW_SHOW);
