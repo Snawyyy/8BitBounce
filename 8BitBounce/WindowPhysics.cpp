@@ -62,6 +62,13 @@ void WindowPhysics::ApplyCollisions()
             {
                 CalculateCollisions(other);
             }
+            double distanceY = std::abs(body.pos.y - other.pos.y);
+            double distanceX = std::abs(body.pos.x - other.pos.x);
+
+            if (distanceY != 0 && distanceX != 0)
+            {
+                ApplyGravity(other);
+            }
         }
     }
 }
