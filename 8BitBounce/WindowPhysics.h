@@ -6,7 +6,6 @@
 class WindowPhysics : public RigidBody
 {
 public:
-    bool hasGravity;
     int id;
 
     WindowPhysics(HWND WindowHandle);
