@@ -58,7 +58,7 @@ void WindowPhysics::ApplyCollisions()
 
             physicsObj other = worldObjects.ReadMemory(i);
 
-            if (isColliding(body.pos.x, bodyRadius, other.pos.x, otherBodyRadius) && isColliding(body.pos.y, bodyRadius, other.pos.y, otherBodyRadius))
+            if (isColliding(other))
             {
                 CalculateCollisions(other);
             }
@@ -66,9 +66,16 @@ void WindowPhysics::ApplyCollisions()
     }
 }
 
-bool WindowPhysics::isColliding(float bodyX, float bodyRadius, float otherBodyX, float otherBodyRadius) {
-    float distance = std::abs(bodyX - otherBodyX);
-    float sumOfRadii = bodyRadius + otherBodyRadius;
+bool WindowPhysics::isColliding(const physicsObj& other)
+{
+    float directionX = body.pos.x - other.pos.x;
+    float directionY = body.pos.y - other.pos.y;
+    float distance = sqrt(directionX * directionX + directionY * directionY);
+
+    // Assuming both objects are circular with the same width
+    float sumOfRadii = body.radius + other.radius;
+
+    // If the distance is less than the sum of the radii, they are colliding
     return distance < sumOfRadii;
 }
 
