@@ -52,6 +52,7 @@ public:
     RigidBody(HWND windowHandle);
     void RunPhysics() override;
     void ApplyForce(float addForceX, float addForceY);
+    void ApplyGravity(physicsObj other);
     void Grab();
     void TrackGrabbing();
     void Ungrab();    
