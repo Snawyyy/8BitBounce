@@ -168,8 +168,11 @@ void RigidBody::RunPhysics()
 {
     CalculateTime();
     UpdatePosition();
-    ApplyGravity(body.mass, EARTH_MASS, EARTH_RADIUS);
+    if (worldGravity) 
+    {
+        ApplyWorldGravity(); 
     ApplyFriction();
+    }
     Draggable();
     BorderCollisions();
 }
