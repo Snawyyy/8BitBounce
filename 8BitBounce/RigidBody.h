@@ -13,6 +13,7 @@ struct physicsObj
     Vector2 pos;
     float mass = 1;
     Vector2 velocity = {0 ,0};
+    float radius;
 };
 
 class RigidBody : public Physics
