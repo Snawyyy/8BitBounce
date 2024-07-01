@@ -26,10 +26,6 @@ private:
     float preBodyX;
     float preBodyY;
 
-    // velocity
-    float bodyVx = 0; // Initial horizontal velocity
-    float bodyVy = 0; // Initial vertical velocity
-
     float gravity = 9.8; // Gravity (vertical acceleration)
     float friction = 0.4f;
     float staticFriction = 0.5f;
