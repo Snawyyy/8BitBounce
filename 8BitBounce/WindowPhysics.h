@@ -23,5 +23,5 @@ private:
     UINT timerID;
 
     void ApplyCollisions();
-    bool isColliding(float bodyX, float bodyRadius, float otherBodyX, float otherBodyRadius);
+    bool isColliding(const physicsObj& other);
 };
