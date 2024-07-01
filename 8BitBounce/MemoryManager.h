@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <Windows.h>
+#include "RigidBody.h"
 
 class MemoryManager {
 public:
@@ -9,9 +10,9 @@ public:
     void AllocateMemory(int size);
     void InitializeMemory();
     void PrintMemory();
-    int ReadMemory(int index);
+    physicsObj ReadMemory(int index);
     void DeallocateMemory();
-    void WriteToMemory(int index, int value);
+    void WriteToMemory(int index, physicsObj value);
 
 private:
     MemoryManager();
@@ -20,6 +21,6 @@ private:
     MemoryManager(const MemoryManager&) = delete;
     MemoryManager& operator=(const MemoryManager&) = delete;
 
-    int* array;
+    physicsObj* array;
     int size;
 };

@@ -15,7 +15,7 @@ MemoryManager::~MemoryManager()
 
 void MemoryManager::AllocateMemory(int size) 
 {
-    array = new int[size];
+    array = new physicsObj[size];
     this->size = size;
 }
 
@@ -23,7 +23,8 @@ void MemoryManager::InitializeMemory()
 {
     for (int i = 0; i < size; ++i) 
     {
-        array[i] = NULL;
+        array[i].pos.x = NULL;
+        array[i].pos.y = NULL;
     }
 }
 
@@ -31,12 +32,13 @@ void MemoryManager::PrintMemory()
 {
     for (int i = 0; i < size; ++i) 
     {
-        std::cout << array[i] << " ";
+        std::cout << array[i].pos.y << " ";
+        std::cout << array[i].pos.x << " ";
     }
     std::cout << std::endl;
 }
 
-int MemoryManager::ReadMemory(int index)
+physicsObj MemoryManager::ReadMemory(int index)
 {
     return array[index];
 }
@@ -48,7 +50,7 @@ void MemoryManager::DeallocateMemory()
     size = 0;
 }
 
-void MemoryManager::WriteToMemory(int index, int value) 
+void MemoryManager::WriteToMemory(int index, physicsObj value) 
 {
     if (index >= 0 && index < size) 
     {
