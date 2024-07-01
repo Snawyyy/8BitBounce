@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <cmath>
 
 #define SECOND_TO_MILISECOND 1000
 #define VELOCITY_THRESHOLD 10
