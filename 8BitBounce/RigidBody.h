@@ -47,6 +47,7 @@ public:
     physicsObj body;
 
     Vector2 force = { 0.0f, 0.0f };
+    bool worldGravity = true;
 
     RigidBody(HWND windowHandle);
     void RunPhysics() override;
