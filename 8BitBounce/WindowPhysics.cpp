@@ -62,11 +62,8 @@ void WindowPhysics::ApplyCollisions()
 }
 
 bool WindowPhysics::isColliding(float bodyX, float bodyRadius, float otherBodyX, float otherBodyRadius) {
-    float leftEdge = bodyX - bodyRadius;
-    float rightEdge = bodyX + bodyRadius;
-    float otherLeftEdge = otherBodyX - otherBodyRadius;
-    float otherRightEdge = otherBodyX + otherBodyRadius;
-
-    return !(leftEdge > otherRightEdge || rightEdge < otherLeftEdge);
+    float distance = std::abs(bodyX - otherBodyX);
+    float sumOfRadii = bodyRadius + otherBodyRadius;
+    return distance < sumOfRadii;
 }
 
