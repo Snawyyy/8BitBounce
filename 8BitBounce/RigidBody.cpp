@@ -8,7 +8,6 @@ RigidBody::RigidBody(HWND windowHandle) : Physics(windowHandle)
     preBodyX = centerW;
     preBodyY = centerH;
     body.mass = 1.0f;
-
 }
 
 void RigidBody::CalculateTime()
@@ -43,9 +42,25 @@ void RigidBody::ApplyWorldGravity()
     force.y += gravity * body.mass * SECOND_TO_MILISECOND;
 }
 
-void RigidBody::ApplyGravity(double m1, double m2, double r)
+void RigidBody::ApplyGravity(physicsObj other)
 {
-    force.y += G * (m1 * m2) / (r * r) * SECOND_TO_MILISECOND;
+    float directionX = other.pos.x - body.pos.x;
+    float directionY = other.pos.y - body.pos.y;
+    float distanceSquared = directionX * directionX + directionY * directionY;
+    float distance = sqrt(distanceSquared);
+
+    if (distance > 0) 
+    {
+        float normalizedX = directionX / distance;
+        float normalizedY = directionY / distance;
+
+        // Calculate gravitational force
+        float forceMagnitude = G * (body.mass * other.mass) / distanceSquared;
+
+        // Apply force components
+        force.x += forceMagnitude * normalizedX * SECOND_TO_MILISECOND;
+        force.y += forceMagnitude * normalizedY * SECOND_TO_MILISECOND;
+    }
 }
 
 void RigidBody::ApplyFriction()
