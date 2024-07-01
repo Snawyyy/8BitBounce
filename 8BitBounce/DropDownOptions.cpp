@@ -71,6 +71,32 @@ LRESULT CALLBACK DropDownOptionsProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		break;
 	}
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case 2:
+		{
+			pBall->worldGravity = !pBall->worldGravity;
+			break;
+		}
+		case 3:
+		{
+			pBall->body.mass *= 2;
+			break;
+		}
+		case 4:
+		{
+			pBall->body.mass /= 2;
+			break;
+		}
+		default:
+			break;
+		}
+		break;	
+	{
+	}
+	}
 	case WM_PAINT:
 	{
 		hdc = BeginPaint(hWnd, &ps);
