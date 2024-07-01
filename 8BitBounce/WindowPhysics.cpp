@@ -29,8 +29,8 @@ void WindowPhysics::RunPhysics()
     RigidBody::RunPhysics();
     ApplyCollisions();
     MemoryManager& worldObjects = MemoryManager::getInstance();
-    worldObjects.WriteToMemory(GetId(), bodyX);
-    SetWindowPos(hWnd, NULL, bodyX, bodyY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    worldObjects.WriteToMemory(GetId(), body);
+    SetWindowPos(hWnd, NULL, body.pos.x, body.pos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 int WindowPhysics::GetId()
