@@ -39,7 +39,7 @@ void RigidBody::UpdatePosition()
 
 void RigidBody::ApplyWorldGravity()
 {
-    force.y += gravity * body.mass * SECOND_TO_MILISECOND;
+    force.y += G * (body.mass * EARTH_MASS) / (EARTH_RADIUS * EARTH_RADIUS) * SECOND_TO_MILISECOND;
 }
 
 void RigidBody::ApplyGravity(physicsObj other)
