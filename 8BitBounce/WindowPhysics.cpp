@@ -48,8 +48,6 @@ void WindowPhysics::ApplyCollisions()
     {
         if (i != GetId())
         {
-            int diraction = Clamp(body.pos.x - worldObjects.ReadMemory(i).pos.x, -1, 1);
-
             int bodyRadius = width / 2;
             int otherBodyRadius = width / 2;
 
