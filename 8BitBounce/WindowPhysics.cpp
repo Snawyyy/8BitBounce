@@ -53,9 +53,11 @@ void WindowPhysics::ApplyCollisions()
             int bodyRadius = width / 2;
             int otherBodyRadius = width / 2;
 
-            if (isColliding(body.pos.x, bodyRadius, worldObjects.ReadMemory(i).pos.x, otherBodyRadius) && isColliding(body.pos.y, bodyRadius, worldObjects.ReadMemory(i).pos.y, otherBodyRadius))
+            physicsObj other = worldObjects.ReadMemory(i);
+
+            if (isColliding(body.pos.x, bodyRadius, other.pos.x, otherBodyRadius) && isColliding(body.pos.y, bodyRadius, other.pos.y, otherBodyRadius))
             {
-                CalculateCollisions(worldObjects.ReadMemory(i));
+                CalculateCollisions(other);
             }
         }
     }
