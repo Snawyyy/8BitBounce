@@ -73,10 +73,10 @@ void RigidBody::ApplyFriction()
 void RigidBody::BorderCollisions()
 {
     // Collision with left and right of screen
-    if (body.pos.x + width > screenWidth)
+    if (body.pos.x + body.radius * 2 > screenWidth)
     {
         body.velocity.x = -(body.velocity.x * dampingFactor * restitution); // Apply friction and restitution on bounce
-        body.pos.x = screenWidth - width; // Prevents the body from getting stuck right to the screen
+        body.pos.x = screenWidth - body.radius * 2; // Prevents the body from getting stuck right to the screen
         force.x += 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
     if (body.pos.x < 0)
@@ -87,10 +87,10 @@ void RigidBody::BorderCollisions()
     }
 
     // Collision with top and bottom of screen
-    if (body.pos.y + height > screenHeight - taskbarHeight)
+    if (body.pos.y + body.radius * 2 > screenHeight - taskbarHeight)
     {
         body.velocity.y = -(body.velocity.y * dampingFactor * restitution);
-        body.pos.y = screenHeight - taskbarHeight - height; // Prevents the body from getting stuck below the screen
+        body.pos.y = screenHeight - taskbarHeight - body.radius * 2; // Prevents the body from getting stuck below the screen
         force.y += 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
     if (body.pos.y < 0)
@@ -137,7 +137,7 @@ void RigidBody::CalculateCollisions(physicsObj other)
     float distance = sqrt(directionX * directionX + directionY * directionY);
 
     if (distance != 0) {
-        float overlap = (width / 2 + width / 2) - distance;
+        float overlap = (body.radius + other.radius) - distance;
 
         float normalizedX = directionX / distance;
         float normalizedY = directionY / distance;
@@ -171,7 +171,7 @@ void RigidBody::RunPhysics()
     if (worldGravity) 
     {
         ApplyWorldGravity(); 
-    ApplyFriction();
+        ApplyFriction();
     }
     Draggable();
     BorderCollisions();
