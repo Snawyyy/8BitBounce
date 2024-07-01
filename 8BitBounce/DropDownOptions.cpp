@@ -9,6 +9,7 @@ LRESULT CALLBACK DropDownOptionsProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 	POINT cursorPos;
 	GetCursorPos(&cursorPos);
+	WindowPhysics* pBall = reinterpret_cast<WindowPhysics*>(GetWindowLongPtr(GetParent(hWnd), GWLP_USERDATA));
 
 	switch (uMsg)
 	{
