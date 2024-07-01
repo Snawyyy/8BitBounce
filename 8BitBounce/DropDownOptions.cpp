@@ -63,10 +63,10 @@ LRESULT CALLBACK DropDownOptionsProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 		Button option1(lParam, 2, L"Gravity");
 		option1.Draw(RGB(255, 255, 255), RGB(1, 0, 0));
 
-		Button option2(lParam, 3, L"Add Mass");
+		Button option2(lParam, 3, L"+Mass");
 		option2.Draw(RGB(255, 255, 255), RGB(1, 0, 0));
 
-		Button option3(lParam, 4, L"Reduce Mass");
+		Button option3(lParam, 4, L"-Mass");
 		option3.Draw(RGB(255, 255, 255), RGB(1, 0, 0));
 
 		break;
