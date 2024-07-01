@@ -3,7 +3,14 @@
 WindowPhysics::WindowPhysics(HWND WindowHandle) : RigidBody(WindowHandle)
 {
     timerID = 0;
-    hasGravity = true; // Default to having gravity
+    UpdateSize();
+
+    RECT windowRect;
+    GetWindowRect(hWnd, &windowRect);
+    width = windowRect.right - windowRect.left;
+
+    height = windowRect.bottom - windowRect.top;
+    body.radius = width / 2;
 }
 
 void WindowPhysics::SetTimerID(UINT id)
