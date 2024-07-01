@@ -48,14 +48,14 @@ void WindowPhysics::ApplyCollisions()
     {
         if (i != GetId())
         {
-            int diraction = Clamp(bodyX - worldObjects.ReadMemory(i), -1, 1);
+            int diraction = Clamp(body.pos.x - worldObjects.ReadMemory(i).pos.x, -1, 1);
 
             int bodyRadius = width / 2;
             int otherBodyRadius = width / 2;
 
-            if (isColliding(bodyX, bodyRadius, worldObjects.ReadMemory(i), otherBodyRadius))
+            if (isColliding(body.pos.x, bodyRadius, worldObjects.ReadMemory(i).pos.x, otherBodyRadius) && isColliding(body.pos.y, bodyRadius, worldObjects.ReadMemory(i).pos.y, otherBodyRadius))
             {
-                CalculateCollisions();
+                CalculateCollisions(worldObjects.ReadMemory(i));
             }
         }
     }
