@@ -25,10 +25,8 @@ UINT WindowPhysics::GetTimerID() const
 
 void WindowPhysics::UpdateSize()
 {
-    RECT windowRect;
-    GetWindowRect(hWnd, &windowRect);
-    width = windowRect.right - windowRect.left;
-    height = windowRect.bottom - windowRect.top;
+    width = body.radius * 2;
+    height = body.radius * 2;
 }
 
 void WindowPhysics::RunPhysics()
