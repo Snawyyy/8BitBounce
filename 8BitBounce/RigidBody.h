@@ -38,7 +38,6 @@ private:
     void CalculateTime();
     void UpdatePosition();
     void ApplyWorldGravity();
-    void ApplyGravity(double m1, double m2, double r);
     void ApplyFriction();
     void BorderCollisions();
     void Draggable();
