@@ -35,6 +35,8 @@ LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 		SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
 
+		pBall->Grab();
+		pBall->Ungrab();
 	}
 	else
 	{
