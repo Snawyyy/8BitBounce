@@ -19,7 +19,6 @@ struct physicsObj
 class RigidBody : public Physics
 {
 private:
-    bool isGrounded = false;
     bool isDragging = false;
     POINT clickOffset;
 
