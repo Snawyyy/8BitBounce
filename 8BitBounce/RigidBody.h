@@ -45,10 +45,8 @@ private:
     int GetTaskbarHeight();
 
 public:
-    // Body x,y coords
-    float bodyX;
-    float bodyY;
-    float mass = 1.0f; // Mass of the rigid body
+    physicsObj body;
+
     Vector2 force = { 0.0f, 0.0f };
 
     RigidBody(HWND windowHandle);
@@ -57,7 +55,7 @@ public:
     void Grab();
     void TrackGrabbing();
     void Ungrab();    
-    void CalculateCollisions();
+    void CalculateCollisions(physicsObj other);
 
     int Clamp(int num, int min, int max);
 

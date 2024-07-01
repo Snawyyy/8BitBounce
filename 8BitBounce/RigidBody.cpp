@@ -2,9 +2,13 @@
 
 RigidBody::RigidBody(HWND windowHandle) : Physics(windowHandle)
 {
-    bodyX = centerW;
+    body.pos.x = centerW;
+    body.pos.y = centerH;
+
     preBodyX = centerW;
     preBodyY = centerH;
+    body.mass = 1.0f;
+
 }
 
 void RigidBody::CalculateTime()
@@ -16,19 +20,19 @@ void RigidBody::CalculateTime()
 
 void RigidBody::UpdatePosition()
 {
-    preBodyX = bodyX;
-    preBodyY = bodyY;
+    preBodyX = body.pos.x;
+    preBodyY = body.pos.y;
 
     // Calculate acceleration from the applied force
-    Vector2 acceleration = { force.x / mass, force.y / mass };
+    Vector2 acceleration = { force.x / body.mass, force.y / body.mass };
 
     // Update velocity based on acceleration
-    bodyVx += acceleration.x * deltaTime;
-    bodyVy += acceleration.y * deltaTime;
+    body.velocity.x += acceleration.x * deltaTime;
+    body.velocity.y += acceleration.y * deltaTime;
 
     // Update position based on velocity
-    bodyX += bodyVx * deltaTime;
-    bodyY += bodyVy * deltaTime;
+    body.pos.x += body.velocity.x * deltaTime;
+    body.pos.y += body.velocity.y * deltaTime;
 
     // Reset the applied force after updating the position
     force = Vector2{ 0.0f, 0.0f };
@@ -36,7 +40,7 @@ void RigidBody::UpdatePosition()
 
 void RigidBody::ApplyWorldGravity()
 {
-    force.y += gravity * mass * SECOND_TO_MILISECOND;
+    force.y += gravity * body.mass * SECOND_TO_MILISECOND;
 }
 
 void RigidBody::ApplyGravity(double m1, double m2, double r)
@@ -46,7 +50,7 @@ void RigidBody::ApplyGravity(double m1, double m2, double r)
 
 void RigidBody::ApplyFriction()
 {
-    Vector2 frictionForce = Vector2{ -bodyVx * friction, -bodyVy * friction };
+    Vector2 frictionForce = Vector2{ -body.velocity.x * friction, -body.velocity.y * friction };
     force.x += frictionForce.x;
     force.y += frictionForce.y;
 }
@@ -54,31 +58,31 @@ void RigidBody::ApplyFriction()
 void RigidBody::BorderCollisions()
 {
     // Collision with left and right of screen
-    if (bodyX + width > screenWidth)
+    if (body.pos.x + width > screenWidth)
     {
-        bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
-        bodyX = screenWidth - width; // Prevents the body from getting stuck right to the screen
-        force.x += 2.0f * bodyVx * mass; // Apply impulse force
+        body.velocity.x = -(body.velocity.x * dampingFactor * restitution); // Apply friction and restitution on bounce
+        body.pos.x = screenWidth - width; // Prevents the body from getting stuck right to the screen
+        force.x += 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
-    if (bodyX < 0)
+    if (body.pos.x < 0)
     {
-        bodyVx = -(bodyVx * dampingFactor * restitution); // Apply friction and restitution on bounce
-        bodyX = 0; // Prevents the body from getting stuck left to the screen
-        force.x -= 2.0f * bodyVx * mass; // Apply impulse force
+        body.velocity.x = -(body.velocity.x * dampingFactor * restitution); // Apply friction and restitution on bounce
+        body.pos.x = 0; // Prevents the body from getting stuck left to the screen
+        force.x -= 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
 
     // Collision with top and bottom of screen
-    if (bodyY + height > screenHeight - taskbarHeight)
+    if (body.pos.y + height > screenHeight - taskbarHeight)
     {
-        bodyVy = -(bodyVy * dampingFactor * restitution);
-        bodyY = screenHeight - taskbarHeight - height; // Prevents the body from getting stuck below the screen
-        force.y += 2.0f * bodyVy * mass; // Apply impulse force
+        body.velocity.y = -(body.velocity.y * dampingFactor * restitution);
+        body.pos.y = screenHeight - taskbarHeight - height; // Prevents the body from getting stuck below the screen
+        force.y += 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
-    if (bodyY < 0)
+    if (body.pos.y < 0)
     {
-        bodyVy = -(bodyVy * dampingFactor * restitution);
-        bodyY = 0; // Prevents the body from getting stuck above the screen
-        force.y -= 2.0f * bodyVy * mass; // Apply impulse force
+        body.velocity.y = -(body.velocity.y * dampingFactor * restitution);
+        body.pos.y = 0; // Prevents the body from getting stuck above the screen
+        force.y -= 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
 }
 
@@ -88,8 +92,8 @@ void RigidBody::Draggable()
     GetCursorPos(&cursorPos);
     if (isDragging)
     {
-        bodyX = cursorPos.x - clickOffset.x;
-        bodyY = cursorPos.y - clickOffset.y;
+        body.pos.x = cursorPos.x - clickOffset.x;
+        body.pos.y = cursorPos.y - clickOffset.y;
     }
 }
 
@@ -110,16 +114,17 @@ int RigidBody::GetTaskbarHeight()
     }
 }
 
-void RigidBody::CalculateCollisions()
+void RigidBody::CalculateCollisions(physicsObj other)
 {
-    bodyVx = -(bodyVx * dampingFactor * restitution);
+    body.velocity.x = (-body.velocity.x - other.velocity.x) * restitution;
+    body.velocity.y = (-body.velocity.y - other.velocity.y) * restitution;
 }
 
 void RigidBody::RunPhysics()
 {
     CalculateTime();
     UpdatePosition();
-    ApplyGravity(mass, EARTH_MASS, EARTH_RADIUS);
+    ApplyGravity(body.mass, EARTH_MASS, EARTH_RADIUS);
     ApplyFriction();
     Draggable();
     BorderCollisions();
@@ -135,13 +140,13 @@ void RigidBody::Grab()
 {
     POINT cursorPos;
     GetCursorPos(&cursorPos);
-    clickOffset.x = cursorPos.x - bodyX;
-    clickOffset.y = cursorPos.y - bodyY;
+    clickOffset.x = cursorPos.x - body.pos.x;
+    clickOffset.y = cursorPos.y - body.pos.y;
     isDragging = TRUE;
 
     // Apply an impulse force to cancel out the existing velocity
-    force.x -= bodyVx * mass;
-    force.y -= bodyVy * mass;
+    force.x -= body.velocity.x * body.mass;
+    force.y -= body.velocity.y * body.mass;
 
     SetCapture(hWnd);
     UpdateSize();
@@ -165,12 +170,12 @@ void RigidBody::Ungrab()
 
     // Calculate the velocity from the change in position
     float velocityScaleFactor = 50.0f; // Adjust this value as needed
-    bodyVx = (bodyX - preBodyX) * velocityScaleFactor;
-    bodyVy = (bodyY - preBodyY) * velocityScaleFactor;
+    body.velocity.x = (body.pos.x - preBodyX) * velocityScaleFactor;
+    body.velocity.y = (body.pos.y - preBodyY) * velocityScaleFactor;
 
     // Apply an impulse force based on the calculated velocity
-    force.x += bodyVx * mass;
-    force.y += bodyVy * mass;
+    force.x += body.velocity.x * body.mass;
+    force.y += body.velocity.y * body.mass;
 
     // Release the capture
     ReleaseCapture();
