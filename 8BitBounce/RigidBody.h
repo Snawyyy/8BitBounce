@@ -8,6 +8,13 @@ struct Vector2
     float y;
 };
 
+struct physicsObj
+{
+    Vector2 pos;
+    float mass = 1;
+    Vector2 velocity = {0 ,0};
+};
+
 class RigidBody : public Physics
 {
 private:
