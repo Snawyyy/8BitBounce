@@ -1,154 +1,165 @@
 #include "BallWindow.h"
 
-// Global variables
+	// Global variables
+	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	int taskbarHeight = GetTaskbarHeight();
 
-int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-int taskbarHeight = GetTaskbarHeight();
-
-int width = screenWidth / 30;
-int height = screenWidth / 30;
-
-int red;
-int green;
-int blue;
-
-
-int centerW = screenWidth / 2;
-int centerH = screenHeight / 2;
-
-RigidObject ball;
-
-// Delta time calculations variables
-
-DWORD lastTime = 0;
-DWORD currentTime = 0;
-float deltaTime = 0;
-
-
-// Timer ID
-const int TIMER_ID = 1;
+	int red;
+	int green;
+	int blue;
 
 LRESULT CALLBACK BallWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	static HBRUSH hBrush = NULL;
+	static RECT rect;
+	PAINTSTRUCT ps;
+	HDC hdc;
+
+	const int TIMER_ID = 1;
+
+	WindowPhysics* pBall = nullptr;
+	MemoryManager& worldObjects = MemoryManager::getInstance();
+
+
+	if (uMsg == WM_CREATE)
 	{
-		static HBRUSH hBrush = NULL;
-		static RECT rect;
-		PAINTSTRUCT ps;
-		HDC hdc;
+		// Create the WindowPhysics object and associate it with the window
+		pBall = new WindowPhysics(hWnd);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pBall));
 
-		switch (uMsg)
-		{
-		case WM_CREATE:
-		{
-			// Creates a solid brush for the button background color
-			hBrush = CreateSolidBrush(RGB(red, green, blue)); // Change the RGB values to set your desired background color
-			ball.RigidBody(hWnd);
+		// Creates a solid brush for the button background color
+		hBrush = CreateSolidBrush(RGB(red, green, blue)); // Change the RGB values to set your desired background color
 
-			lastTime = GetTickCount();
+		pBall->lastTime = GetTickCount64();
 
-			SetTimer(hWnd, TIMER_ID, 16, NULL); // 16ms interval (approximately 60 FPS)
+		SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
 
-
-			break;
-		}
-		case WM_SIZE:
-		{
-			// Stores the button's client area dimensions
-			GetClientRect(hWnd, &rect);
-
-			// Create a circular region based on the updated client rect
-			HRGN hRgn = CreateEllipticRgn(0, 0, rect.right, rect.bottom);
-			SetWindowRgn(hWnd, hRgn, TRUE); // Set the window region. TRUE to redraw the window immediately
-
-			// NOTE: The region is now owned by the system, no need to call DeleteObject on hRgn
-			break;
-		}
-		case WM_TIMER:
-		{
-			if (wParam == TIMER_ID)
-			{
-				currentTime = GetTickCount64();
-				deltaTime = (currentTime - lastTime) / 1000.0f;
-				lastTime = currentTime;
-
-				ball.GetDeltaTime(deltaTime);
-				ball.RunPhysics();
-			}
-			break;
-		}
-
-		case WM_PAINT:
-		{
-			hdc = BeginPaint(hWnd, &ps);
-
-			// Create the outer and inner rectangles
-			RECT outerRect = { 0, 0, rect.right, rect.bottom };
-			RECT innerRect = { 5, 5, rect.right - 5, rect.bottom - 5 };
-
-			// Create the outer and inner regions
-			HRGN outerRgn = CreateEllipticRgnIndirect(&outerRect);
-			HRGN innerRgn = CreateEllipticRgnIndirect(&innerRect);
-
-			// Combine the regions to create a ring shape
-			CombineRgn(outerRgn, outerRgn, innerRgn, RGN_DIFF);
-			// Set the brush color for the outer ring
-			HBRUSH outerBrush = CreateSolidBrush(RGB(0,0,0));
-			SelectObject(hdc, outerBrush);
-
-			// Fill the outer ring
-			FillRgn(hdc, outerRgn, outerBrush);
-
-			// Set the brush color for the inner circle
-			HBRUSH innerBrush = CreateSolidBrush(RGB(red, green, blue));
-			SelectObject(hdc, innerBrush);
-
-			// Fill the inner circle
-			Ellipse(hdc, innerRect.left, innerRect.top, innerRect.right, innerRect.bottom);
-			FillRgn(hdc, innerRgn, innerBrush);
-			// Clean up the brushes and regions
-			DeleteObject(outerBrush);
-			DeleteObject(innerBrush);
-			DeleteObject(outerRgn);
-			DeleteObject(innerRgn);
-
-			EndPaint(hWnd, &ps);
-
-			break;
-		}
-		case WM_MOUSEMOVE:
-		{
-			ball.TrackGrabbing();
-
-			break;
-		}
-		case WM_LBUTTONDOWN:
-		{
-			ball.Grab();
-			break;
-		}
-		case WM_LBUTTONUP:
-		{
-			ball.Ungrab();
-			break;
-		}
-		case WM_DESTROY:
-		{
-			// Clean up resources
-			DeleteObject(hBrush);
-			KillTimer(hWnd, TIMER_ID);
-			PostQuitMessage(0);
-			break;
-		}
-		default:
-			return DefWindowProc(hWnd, uMsg, wParam, lParam);
-		}
-
-		return 0;
+		pBall->Grab();
+		pBall->Ungrab();
 	}
+	else
+	{
+		// Retrieve the WindowPhysics object associated with the window
+		pBall = reinterpret_cast<WindowPhysics*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
+	bool timerRunning = false;
+
+	switch (uMsg)
+	{
+	case WM_SIZE:
+	{
+		// Stores the button's client area dimensions
+		GetClientRect(hWnd, &rect);
+
+		// Create a circular region based on the updated client rect
+		HRGN hRgn = CreateEllipticRgn(0, 0, rect.right, rect.bottom);
+		SetWindowRgn(hWnd, hRgn, TRUE); // Set the window region. TRUE to redraw the window immediately
+
+		// NOTE: The region is now owned by the system, no need to call DeleteObject on hRgn
+		break;
+	}
+	case WM_TIMER:
+	{
+
+		if (wParam == TIMER_ID)
+		{
+			pBall->RunPhysics();
+		}
+		break;
+	}
+
+	case WM_PAINT:
+	{
+		hdc = BeginPaint(hWnd, &ps);
+
+		// Create the outer and inner rectangles
+		RECT outerRect = { 0, 0, rect.right, rect.bottom };
+		RECT innerRect = { 5, 5, rect.right - 5, rect.bottom - 5 };
+
+		// Create the outer and inner regions
+		HRGN outerRgn = CreateEllipticRgnIndirect(&outerRect);
+		HRGN innerRgn = CreateEllipticRgnIndirect(&innerRect);
+
+		// Combine the regions to create a ring shape
+		CombineRgn(outerRgn, outerRgn, innerRgn, RGN_DIFF);
+		// Set the brush color for the outer ring
+		HBRUSH outerBrush = CreateSolidBrush(RGB(100,0,0));
+		SelectObject(hdc, outerBrush);
+
+		// Fill the outer ring
+		FillRgn(hdc, outerRgn, outerBrush);
+
+		// Set the brush color for the inner circle
+		HBRUSH innerBrush = CreateSolidBrush(RGB(red, green, blue));
+		SelectObject(hdc, innerBrush);
+
+		// Fill the inner circle
+		Ellipse(hdc, innerRect.left, innerRect.top, innerRect.right, innerRect.bottom);
+		FillRgn(hdc, innerRgn, innerBrush);
+		// Clean up the brushes and regions
+		DeleteObject(outerBrush);
+		DeleteObject(innerBrush);
+		DeleteObject(outerRgn);
+		DeleteObject(innerRgn);
+
+		EndPaint(hWnd, &ps);
+
+		break;
+	}
+	case WM_MOUSEMOVE:
+	{
+		pBall->TrackGrabbing();
+
+		break;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		pBall->Grab();
+		SendMessage(hWnd, WM_USER + 2, 0, 0);
+		break;
+	}
+	case WM_USER + 2:
+	{
+		if (timerRunning == false)
+		{
+			SetTimer(hWnd, TIMER_ID, 8, NULL); // 16ms interval (approximately 60 FPS)
+			pBall->lastTime = GetTickCount64();
+		}
+		break;
+	}
+	case WM_LBUTTONUP:
+	{
+		pBall->Ungrab();
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		if (timerRunning == true)
+		{
+			timerRunning = false;
+		}
+		KillTimer(hWnd, 1);
+		DropDownOptions(hWnd);
+		break;
+	}
+	case WM_DESTROY:
+	{
+		// Clean up resources
+		DeleteObject(hBrush);
+		KillTimer(hWnd, TIMER_ID);
+		PostQuitMessage(0);
+		break;
+	}
+	default:
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+
+	return 0;
 }
 
-Window::Window() : m_hinstance(GetModuleHandle(nullptr))
+Window::Window(int width, int height) : m_hinstance(GetModuleHandle(nullptr))
 {
 
 	const wchar_t* CLASS_NAME = L"Snawy's Window Class";
@@ -162,11 +173,12 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
 	wndClass.hbrBackground = CreateSolidBrush(RGB(0,0,0));
 	RegisterClass(&wndClass);
 
-	DWORD style = WS_POPUP | WS_CLIPCHILDREN;
+	DWORD style = WS_POPUP | WS_CHILD;
 
+	HWND worldWindowHandle = FindWindow(NULL, L"World_Window");
 
 	m_hWnd = CreateWindowEx(
-		0,
+		WS_EX_TOPMOST,
 		CLASS_NAME,
 		L"Ball",
 		style,
@@ -174,7 +186,7 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
 		CW_USEDEFAULT,
 		width,
 		height,
-		NULL,
+		worldWindowHandle,
 		NULL,
 		m_hinstance,
 		NULL
@@ -184,6 +196,10 @@ Window::Window() : m_hinstance(GetModuleHandle(nullptr))
 
 }
 
+void Window::Show()
+{
+	ShowWindow(m_hWnd, SW_SHOW);
+}
 Window::~Window()
 {
 	const wchar_t* CLASS_NAME = L"Snawy's Window Class";
@@ -191,22 +207,13 @@ Window::~Window()
 	UnregisterClass(CLASS_NAME, m_hinstance);
 }
 
-bool Window::ProcessMessages()
+void Window::ProcessMessages()
 {
-	MSG msg = {};
-
-	while (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE))
-	{
-		if (msg.message == WM_QUIT)
-		{
-			return false;
-		}
-
+	MSG msg = { };
+	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-
 	}
-	return true;
 }
 
 int GetTaskbarHeight()

@@ -1,16 +1,21 @@
 #pragma once
 #include <Windows.h>
-#include "Physics.h"
+#include "WindowPhysics.h"
+#include "WorldWindow.h"
+#include "DropDownOptions.h"
 
 class Window
 {
 public:
-	Window();
+	Window(int width, int height);
+	
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
+	void Show();
+
 	~Window();
 
-	bool ProcessMessages();
+	void ProcessMessages();
 
 private:
 	HINSTANCE m_hinstance;
