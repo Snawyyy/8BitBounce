@@ -14,11 +14,6 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-	// Delta time calculations variables
-	DWORD lastTime = 0;
-	DWORD currentTime = 0;
-	float deltaTime = 0;
-
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -38,16 +33,6 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 		SetTimer(hWnd, 2, 8, NULL); // 16ms interval (approximately 60 FPS)
 
-		break;
-	}
-	case WM_TIMER:
-	{
-		if (wParam == 2)
-		{
-			currentTime = GetTickCount64();
-			deltaTime = (currentTime - lastTime) / 1000.0f;
-			lastTime = currentTime;
-		}
 		break;
 	}
 	case WM_DRAWITEM:
