@@ -77,13 +77,11 @@ void RigidBody::BorderCollisions()
     {
         body.velocity.x = -(body.velocity.x * dampingFactor * body.restitution); // Apply friction and restitution on bounce
         body.pos.x = screenWidth - body.radius * 2; // Prevents the body from getting stuck right to the screen
-        force.x += 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
     if (body.pos.x < 0)
     {
         body.velocity.x = -(body.velocity.x * dampingFactor * body.restitution); // Apply friction and restitution on bounce
         body.pos.x = 0; // Prevents the body from getting stuck left to the screen
-        force.x -= 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
 
     // Collision with top and bottom of screen
@@ -91,13 +89,11 @@ void RigidBody::BorderCollisions()
     {
         body.velocity.y = -(body.velocity.y * dampingFactor * body.restitution);
         body.pos.y = screenHeight - taskbarHeight - body.radius * 2; // Prevents the body from getting stuck below the screen
-        force.y += 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
     if (body.pos.y < 0)
     {
         body.velocity.y = -(body.velocity.y * dampingFactor * body.restitution);
         body.pos.y = 0; // Prevents the body from getting stuck above the screen
-        force.y -= 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
 }
 
