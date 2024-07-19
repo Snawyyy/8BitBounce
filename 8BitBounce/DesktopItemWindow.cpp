@@ -155,7 +155,6 @@ LRESULT CALLBACK DesktopItemWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
     case WM_RBUTTONDOWN:
 
         KillTimer(hWnd, TIMER_ID);
-        DropDownOptions(hWnd, pData->pWindow->pPhysics);
         break;
 
     case WM_DESTROY:

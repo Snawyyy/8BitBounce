@@ -28,6 +28,12 @@
     <Filter Include="Header Files\Windows">
       <UniqueIdentifier>{97fb186b-861d-45d4-aefd-4a7be28482a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Ai">
+      <UniqueIdentifier>{6f621962-afdb-4924-8cb4-771c0a19764b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Ai">
+      <UniqueIdentifier>{9bac7bde-7139-460c-bbea-318d4022724c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp">
@@ -53,6 +59,12 @@
     </ClCompile>
     <ClCompile Include="WorldWindow.cpp">
       <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
+    <ClCompile Include="Movements.cpp">
+      <Filter>Source Files\Ai</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="DesktopItemWindow.h">
       <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>Header Files\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="Movements.h">
+      <Filter>Header Files\Ai</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

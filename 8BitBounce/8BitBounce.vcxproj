@@ -128,8 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp" />
+    <ClCompile Include="Creature.cpp" />
     <ClCompile Include="DesktopItemWindow.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
+    <ClCompile Include="Movements.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="WindowIdManager.cpp" />
@@ -138,9 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Creature.h" />
     <ClInclude Include="DesktopItemWindow.h" />
     <ClInclude Include="DropDownOptions.h" />
     <ClInclude Include="MemoryManager.h" />
+    <ClInclude Include="Movements.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Ui.h" />
