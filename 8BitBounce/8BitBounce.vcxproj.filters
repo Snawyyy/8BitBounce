@@ -27,13 +27,7 @@
     <ClCompile Include="8BitBounce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BallWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WorldWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DropDownOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RigidBody.cpp">
@@ -53,9 +47,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BallWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WorldWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>

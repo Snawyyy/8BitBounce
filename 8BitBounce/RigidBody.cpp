@@ -131,37 +131,30 @@ int RigidBody::GetTaskbarHeight()
 
 void RigidBody::CalculateCollisions(physicsObj other)
 {
-    float directionX = body.pos.x - other.pos.x;
-    float directionY = body.pos.y - other.pos.y;
+    // Relative velocity
+    Vector2 relativeVelocity = {
+        other.velocity.x - body.velocity.x,
+        other.velocity.y - body.velocity.y
+    };
 
-    float distance = sqrt(directionX * directionX + directionY * directionY);
+    // Relative position
+    Vector2 relativePosition = {
+        other.pos.x - body.pos.x,
+        other.pos.y - body.pos.y
+    };
 
-    if (distance != 0) {
-        float overlap = (body.radius + other.radius) - distance;
+    // Distance squared
+    float distSq = relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y;
 
-        float normalizedX = directionX / distance;
-        float normalizedY = directionY / distance;
+    // Calculate the magnitude of the impact along the line of collision
+    float impactFactor = (2 * other.mass) / (body.mass + other.mass) *
+        (relativeVelocity.x * relativePosition.x + relativeVelocity.y * relativePosition.y) / distSq;
 
-        body.pos.x += overlap * normalizedX;
-        body.pos.y += overlap * normalizedY;
-
-        // Improved physics for velocity calculation
-        float relativeVelocityX = body.velocity.x - other.velocity.x;
-        float relativeVelocityY = body.velocity.y - other.velocity.y;
-
-        float dotProduct = relativeVelocityX * normalizedX + relativeVelocityY * normalizedY;
-
-        if (dotProduct > 0) return; // Objects are moving apart, no collision response needed
-
-        float impulse = -(1 + restitution) * dotProduct;
-        impulse /= 1 / body.mass + 1 / other.mass;
-
-        float impulseX = impulse * normalizedX;
-        float impulseY = impulse * normalizedY;
-
-        body.velocity.x += impulseX / body.mass;
-        body.velocity.y += impulseY / body.mass;
-    }
+    // Update velocities based on impact factor
+    body.velocity.x -= impactFactor * relativePosition.x;
+    body.velocity.y -= impactFactor * relativePosition.y;
+    other.velocity.x += impactFactor * relativePosition.x;
+    other.velocity.y += impactFactor * relativePosition.y;
 }
 
 void RigidBody::RunPhysics()
