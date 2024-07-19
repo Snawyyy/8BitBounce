@@ -5,15 +5,15 @@ struct WindowData
     DesktopItemWindow* pWindow;
 };
 
-DesktopItemWindow::DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creature, HBITMAP hBitmap)
-    : hInstance(hInstance), hBitmap(hBitmap)
+DesktopItemWindow::DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creatureType, HBITMAP hBitmap)
+    : hInstance(hInstance), hBitmap(hBitmap), creature(creature)
 {
     BITMAP bitmap;
     GetObject(hBitmap, sizeof(BITMAP), &bitmap);
     int width = bitmap.bmWidth;
     int height = bitmap.bmHeight;
 
-    CreateTransparentWindow(width, height, creature);
+    CreateTransparentWindow(width, height);
     SetWindowTransparency();
 
     Show();
@@ -28,7 +28,7 @@ DesktopItemWindow::~DesktopItemWindow()
     }
 }
 
-void DesktopItemWindow::CreateTransparentWindow(int width, int height, Creature creatureType)
+void DesktopItemWindow::CreateTransparentWindow(int width, int height)
 {
     static bool classRegistered = false;
     if (!classRegistered)
@@ -64,7 +64,6 @@ void DesktopItemWindow::CreateTransparentWindow(int width, int height, Creature 
 
     WindowData* pData = new WindowData;
     pData->pWindow = this;
-    creature = creatureType;
 
     SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pData));
 }

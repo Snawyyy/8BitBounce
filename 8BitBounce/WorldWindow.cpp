@@ -1,6 +1,32 @@
 #include "WorldWindow.h"
 
 void CreateWindowThread() {
+	HBITMAP hBitmap = (HBITMAP)LoadImageW(nullptr, L"C:\\Users\\Snawy\\Desktop\\Drawing\\GameDev\\BitBlade\\HookBar4.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	if (!hBitmap) {
+		MessageBox(nullptr, L"Failed to load bitmap", L"Error", MB_ICONERROR);
+		return;
+	}
+
+	Creature creature = nullptr;
+
+	HINSTANCE hInstance = GetModuleHandle(nullptr);
+	if (!hInstance) {
+		MessageBox(nullptr, L"Failed to get module handle", L"Error", MB_ICONERROR);
+		DeleteObject(hBitmap);
+		return;
+	}
+
+	int nCmdShow = SW_SHOW;
+
+	try {
+		DesktopItemWindow window(hInstance, nCmdShow, creature, hBitmap);
+		window.ItemProcessMessages();
+	}
+	catch (...) {
+		MessageBox(nullptr, L"Failed to create DesktopItemWindow", L"Error", MB_ICONERROR);
+	}
+
+	DeleteObject(hBitmap);
 }
 
 LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

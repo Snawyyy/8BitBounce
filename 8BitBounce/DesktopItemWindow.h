@@ -10,7 +10,7 @@ public:
     Creature creature = nullptr;
     WindowPhysics* pPhysics;
 
-    DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creature, HBITMAP hBitmap);
+    DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creatureType, HBITMAP hBitmap);
     ~DesktopItemWindow();
 
     void ItemProcessMessages();
@@ -24,6 +24,6 @@ private:
     HBITMAP hBitmap;
 
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    void CreateTransparentWindow(int width, int height, Creature creatureType);
+    void CreateTransparentWindow(int width, int height);
     void SetWindowTransparency();
 };

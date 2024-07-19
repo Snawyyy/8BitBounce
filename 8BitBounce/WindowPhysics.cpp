@@ -75,14 +75,14 @@ void WindowPhysics::ApplyCollisions()
 
 bool WindowPhysics::isColliding(const physicsObj& other)
 {
-    float directionX = body.pos.x - other.pos.x;
-    float directionY = body.pos.y - other.pos.y;
-    float distance = sqrt(directionX * directionX + directionY * directionY);
+    float dx = body.pos.x - other.pos.x;
+    float dy = body.pos.y - other.pos.y;
 
-    // Assuming both objects are circular with the same width
+    float distanceSquared = dx * dx + dy * dy;
+
     float sumOfRadii = body.radius + other.radius;
+    float radiusSquared = sumOfRadii * sumOfRadii;
 
-    // If the distance is less than the sum of the radii, they are colliding
-    return distance < sumOfRadii;
+    return distanceSquared <= radiusSquared;
 }
 

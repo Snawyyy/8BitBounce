@@ -14,6 +14,7 @@ struct physicsObj
     float mass = 1;
     Vector2 velocity = {0 ,0};
     float radius;
+    float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
 };
 
 class RigidBody : public Physics
@@ -30,7 +31,6 @@ private:
     float friction = 0.4f;
     float staticFriction = 0.5f;
     float dampingFactor = 0.9f; // damping factor for energy loss on bounce
-    float restitution = 0.9; // Restitution coefficient (0 to 1, where 1 is perfectly elastic)
     const double G = 6.67430e-11;  // gravitational constant in m^3 kg^-1 s^-2
     const double EARTH_MASS = 5.9722e24;  // mass of the Earth in kg
     const double EARTH_RADIUS = 6.371e6;  // radius of the Earth in meters
@@ -56,7 +56,7 @@ public:
     void Grab();
     void TrackGrabbing();
     void Ungrab();    
-    void CalculateCollisions(physicsObj other);
+    void CalculateCollisions(physicsObj& other);
 
     int Clamp(int num, int min, int max);
 
