@@ -56,7 +56,18 @@ void WindowPhysics::ApplyCollisions()
             int bodyRadius = width / 2;
             int otherBodyRadius = width / 2;
 
+            std::vector<WindowInfo> rects;
+            rects = GetWindowsInfo();
+
             physicsObj other = worldObjects.ReadMemory(i);
+            for (const auto& wi : rects)
+            {
+                if (isCollidingWithWindow(wi))
+                {
+                    CalculateCollisionsWithWindow(wi);
+                }
+            }
+
 
             if (isColliding(other))
             {
