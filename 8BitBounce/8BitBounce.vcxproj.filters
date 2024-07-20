@@ -66,6 +66,9 @@
     <ClCompile Include="Movements.cpp">
       <Filter>Source Files\Ai</Filter>
     </ClCompile>
+    <ClCompile Include="WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -109,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="Movements.h">
       <Filter>Header Files\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

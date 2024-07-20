@@ -2,6 +2,7 @@
 #include "RigidBody.h"
 #include "WindowIdManager.h"
 #include "MemoryManager.h"
+#include "WindowManager.h"
 
 class WindowPhysics : public RigidBody
 {

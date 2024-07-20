@@ -135,6 +135,7 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="WindowIdManager.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="WindowPhysics.cpp" />
     <ClCompile Include="WorldWindow.cpp" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="UiElements.h" />
     <ClInclude Include="UiSettings.h" />
     <ClInclude Include="WindowIdManager.h" />
+    <ClInclude Include="WindowManager.h" />
     <ClInclude Include="WindowPhysics.h" />
     <ClInclude Include="WorldWindow.h" />
   </ItemGroup>
