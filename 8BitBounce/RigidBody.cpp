@@ -22,18 +22,14 @@ void RigidBody::UpdatePosition()
     preBodyX = body.pos.x;
     preBodyY = body.pos.y;
 
-    // Calculate acceleration from the applied force
     Vector2 acceleration = { force.x / body.mass, force.y / body.mass };
 
-    // Update velocity based on acceleration
     body.velocity.x += acceleration.x * deltaTime;
     body.velocity.y += acceleration.y * deltaTime;
 
-    // Update position based on velocity
     body.pos.x += body.velocity.x * deltaTime;
     body.pos.y += body.velocity.y * deltaTime;
 
-    // Reset the applied force after updating the position
     force = Vector2{ 0.0f, 0.0f };
 }
 
