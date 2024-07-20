@@ -99,8 +99,8 @@ bool WindowPhysics::isColliding(const physicsObj& other)
 
 bool WindowPhysics::isCollidingWithWindow(const WindowInfo& window)
 {
-    float closestX = Clamp(body.pos.x, (float)window.rect.left, (float)window.rect.right);
-    float closestY = Clamp(body.pos.y, (float)window.rect.top, (float)window.rect.bottom);
+    float closestX = Clamp(body.pos.x, (float)window.rect.left - body.radius, (float)window.rect.right - body.radius);
+    float closestY = Clamp(body.pos.y, (float)window.rect.top - body.radius, (float)window.rect.bottom - body.radius);
 
 
     float distanceX = body.pos.x - closestX;

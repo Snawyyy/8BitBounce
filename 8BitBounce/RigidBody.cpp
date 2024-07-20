@@ -17,7 +17,7 @@ void RigidBody::CalculateTime()
     lastTime = currentTime;
 }
 
-void RigidBody::UpdatePosition()
+void RigidBody::UpdatePosition() 
 {
     preBodyX = body.pos.x;
     preBodyY = body.pos.y;
