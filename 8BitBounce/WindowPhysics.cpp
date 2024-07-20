@@ -86,3 +86,17 @@ bool WindowPhysics::isColliding(const physicsObj& other)
     return distanceSquared <= radiusSquared;
 }
 
+bool WindowPhysics::isCollidingWithWindow(const WindowInfo& window)
+{
+    float closestX = Clamp(body.pos.x, (float)window.rect.left, (float)window.rect.right);
+    float closestY = Clamp(body.pos.y, (float)window.rect.top, (float)window.rect.bottom);
+
+
+    float distanceX = body.pos.x - closestX;
+    float distanceY = body.pos.y - closestY;
+
+    float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+    return distanceSquared < (body.radius * body.radius);
+}
+
