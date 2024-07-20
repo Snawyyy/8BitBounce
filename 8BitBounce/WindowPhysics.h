@@ -23,4 +23,5 @@ private:
 
     void ApplyCollisions();
     bool isColliding(const physicsObj& other);
+    bool isCollidingWithWindow(const WindowInfo& window);
 };
