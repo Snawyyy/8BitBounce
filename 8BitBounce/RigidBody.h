@@ -58,6 +58,6 @@ public:
     void Ungrab();    
     void CalculateCollisions(physicsObj& other);
 
-    int Clamp(int num, int min, int max);
+    float Clamp(float num, float min, float max);
 
 };

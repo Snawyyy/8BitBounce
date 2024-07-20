@@ -233,7 +233,7 @@ void RigidBody::Ungrab()
     ReleaseCapture();
 }
 
-int RigidBody::Clamp(int num, int min, int max)
+float RigidBody::Clamp(float num, float min, float max)
 {
     if (num < min) {
         return min;
