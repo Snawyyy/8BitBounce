@@ -58,6 +58,7 @@ public:
     void TrackGrabbing();
     void Ungrab();    
     void CalculateCollisions(physicsObj& other);
+    void CalculateCollisionsWithWindow(const WindowInfo& window);
 
     float Clamp(float num, float min, float max);
 

@@ -168,6 +168,55 @@ void RigidBody::CalculateCollisions(physicsObj& other)
     other.velocity.y -= impactFactor * body.mass * normal.y;
 }
 
+void RigidBody::CalculateCollisionsWithWindow(const WindowInfo& window)
+{
+    // Get the full window rectangle in screen coordinates
+    RECT windowRect = window.rect;
+
+    // Find the closest point on the window to the circle's center
+    float closestX = Clamp(body.pos.x, (float)windowRect.left, (float)windowRect.right);
+    float closestY = Clamp(body.pos.y, (float)windowRect.top, (float)windowRect.bottom);
+
+    Vector2 relativePosition = {
+        closestX - body.pos.x,
+        closestY - body.pos.y
+    };
+
+    float distSq = relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y;
+
+    if (distSq == 0.0f) return;
+
+    Vector2 normal = {
+        relativePosition.x / sqrt(distSq),
+        relativePosition.y / sqrt(distSq)
+    };
+
+    float penetrationDepth = body.radius - sqrt(distSq);
+    if (penetrationDepth > 0) {
+        // For window collision, we only move the body (the window doesn't move)
+        float correctionFactor = penetrationDepth;
+        body.pos.x -= correctionFactor * normal.x;
+        body.pos.y -= correctionFactor * normal.y;
+    }
+
+    // Treat the window as an object with infinite mass
+    Vector2 relativeVelocity = {
+        -body.velocity.x,
+        -body.velocity.y
+    };
+
+    float velocityAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
+
+    if (velocityAlongNormal > 0) return;
+
+    float impactFactor = (1 + body.restitution) * velocityAlongNormal;
+
+    body.velocity.x += impactFactor * normal.x;
+    body.velocity.y += impactFactor * normal.y;
+
+    ApplyFriction();
+}
+
 
 void RigidBody::RunPhysics()
 {
