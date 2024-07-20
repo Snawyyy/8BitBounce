@@ -1,6 +1,7 @@
 #pragma once
 #include "Physics.h"
 #include <windows.h>
+#include "WindowManager.h"
 
 struct Vector2
 {
