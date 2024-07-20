@@ -166,12 +166,10 @@ void RigidBody::CalculateCollisions(physicsObj& other)
 
 void RigidBody::CalculateCollisionsWithWindow(const WindowInfo& window)
 {
-    // Get the full window rectangle in screen coordinates
     RECT windowRect = window.rect;
 
-    // Find the closest point on the window to the circle's center
-    float closestX = Clamp(body.pos.x, (float)windowRect.left, (float)windowRect.right);
-    float closestY = Clamp(body.pos.y, (float)windowRect.top, (float)windowRect.bottom);
+    float closestX = Clamp(body.pos.x, (float)windowRect.left - body.radius, (float)windowRect.right - body.radius);
+    float closestY = Clamp(body.pos.y, (float)windowRect.top - body.radius, (float)windowRect.bottom - body.radius);
 
     Vector2 relativePosition = {
         closestX - body.pos.x,
