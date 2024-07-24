@@ -125,6 +125,44 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         break;
     }
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        RECT rect;
+        GetWindowRect(hWnd, &rect);
+
+        // Create a compatible DC for double-buffering
+        HDC hdcMem = CreateCompatibleDC(hdc);
+        HBITMAP hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+        HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hbmMem);
+
+        // Capture the current window content into a bitmap
+        BitBlt(hdcMem, 0, 0, rect.right, rect.bottom, hdc, 0, 0, SRCCOPY);
+
+        // Create another compatible DC for drawing
+        HDC hdcBuffer = CreateCompatibleDC(hdc);
+        HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+        HBITMAP hbmBufferOld = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+
+        // Draw the captured screenshot onto the buffer
+        BitBlt(hdcBuffer, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
+
+        // Copy the off-screen buffer to the screen
+        BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
+
+        // Clean up
+        SelectObject(hdcBuffer, hbmBufferOld);
+        DeleteObject(hbmBuffer);
+        DeleteDC(hdcBuffer);
+
+        SelectObject(hdcMem, hbmOld);
+        DeleteObject(hbmMem);
+        DeleteDC(hdcMem);
+
+        EndPaint(hWnd, &ps);
+        break;
+    }
     case WM_COMMAND:
     {
         switch (LOWORD(wParam))
