@@ -85,32 +85,27 @@ public:
 		int width = GetWidth(hWnd);
 		int height = GetHeight(hWnd);
 
-		// Create a pen of desired thickness and color
-		HPEN hPen = CreatePen(PS_SOLID, BAR_MARGIN * 2, WINODW_UI_COLOR);
+		HPEN hPenMain = CreatePen(PS_SOLID, BAR_MARGIN * 2, WINODW_UI_COLOR);
+		HPEN hPenShadow = CreatePen(PS_SOLID, BORDER_EFFECT_SIZE, GetShadow(WINODW_UI_COLOR, factor));
+		HPEN hPenShine = CreatePen(PS_SOLID, BORDER_EFFECT_SIZE, GetShine(WINODW_UI_COLOR, factor));
 
-		// Select the pen and a null brush into the DC
-		HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
+		HPEN hOldPen = (HPEN)SelectObject(hdc, hPenMain);
 		HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
 
-		// Draw the rectangle
 		Rectangle(hdc, 0, 0, width, height);
 
-		// Draw smaller Darker rectangle for shading
-		hPen = CreatePen(PS_SOLID, BORDER_EFFECT_SIZE, GetShadow(WINODW_UI_COLOR, factor));
-		hOldPen = (HPEN)SelectObject(hdc, hPen);
-
+		SelectObject(hdc, hPenShadow);
 		Rectangle(hdc, 0, 0, width, height);
 
-		hPen = CreatePen(PS_SOLID, BORDER_EFFECT_SIZE, GetShine(WINODW_UI_COLOR, factor));
-		hOldPen = (HPEN)SelectObject(hdc, hPen);
+		SelectObject(hdc, hPenShine);
+		MoveToEx(hdc, 0, 0, NULL);
+		LineTo(hdc, 0, height);
 
-		Rectangle(hdc, 0, 0, 1, height);
-
-		// Restore the original pen and brush
 		SelectObject(hdc, hOldPen);
 		SelectObject(hdc, hOldBrush);
 
-		// Clean up
-		DeleteObject(hPen);
+		DeleteObject(hPenMain);
+		DeleteObject(hPenShadow);
+		DeleteObject(hPenShine);
 	}
 };
