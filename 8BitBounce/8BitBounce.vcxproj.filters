@@ -69,6 +69,9 @@
     <ClCompile Include="WindowManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DropDownOptions.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -95,9 +98,6 @@
     <ClInclude Include="WindowPhysics.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="DropDownOptions.h">
-      <Filter>Header Files\Ui</Filter>
-    </ClInclude>
     <ClInclude Include="WindowIdManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="WindowManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropDownOptions.h">
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
