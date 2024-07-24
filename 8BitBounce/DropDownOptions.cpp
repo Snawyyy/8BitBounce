@@ -90,7 +90,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_DRAWITEM:
     {
-        Button isGravity = Button(lParam, 1, L"Gravity");
+        if (s_rigidBody != nullptr)
+        {
             std::wstring isGravityText = L"Gravity: " + std::wstring(s_rigidBody->worldGravity ? L"On" : L"Off");
             Button isGravity(lParam, 1, isGravityText.c_str());
         isGravity.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
@@ -110,6 +111,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             std::wstring minusRestitutionText = L"-Restitution: " + FormatLargeNumber(s_rigidBody->body.restitution);
             Button minusRestitution(lParam, 5, minusRestitutionText.c_str());
         minusRestitution.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
+        }
+
         break;
     }
     case WM_PAINT:
