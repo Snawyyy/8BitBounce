@@ -10,3 +10,5 @@
 void DropDownOptions(HWND parent, WindowPhysics& rigidBody);
 
 std::wstring FormatLargeNumber(float number);
+
+#define REDRAW_TIMER_ID 1

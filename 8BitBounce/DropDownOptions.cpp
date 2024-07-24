@@ -63,6 +63,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
+        SetTimer(hWnd, REDRAW_TIMER_ID, 100, NULL);
+
         RECT clientRect;
         GetClientRect(hWnd, &clientRect);
         int buttonWidth = clientRect.right - clientRect.left;
@@ -87,6 +89,14 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         HWND minusRestitutionButton = CreateWindowA("BUTTON", "", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
             0, yOffset, buttonWidth, BUTTON_HEIGHT, hWnd, (HMENU)5, NULL, NULL);
+    }
+    case WM_TIMER:
+    {
+        if (wParam == REDRAW_TIMER_ID)
+        {
+            InvalidateRect(hWnd, NULL, TRUE);
+        }
+        break;
     }
     case WM_DRAWITEM:
     {
@@ -113,18 +123,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         minusRestitution.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
         }
 
-        break;
-    }
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hWnd, &ps);
-
-        HBRUSH hBrush = CreateSolidBrush(RGB(240, 240, 240));
-        FillRect(hdc, &ps.rcPaint, hBrush);
-        DeleteObject(hBrush);
-
-        EndPaint(hWnd, &ps);
         break;
     }
     case WM_COMMAND:
