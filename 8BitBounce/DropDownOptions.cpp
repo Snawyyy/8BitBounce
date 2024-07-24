@@ -91,18 +91,24 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_DRAWITEM:
     {
         Button isGravity = Button(lParam, 1, L"Gravity");
+            std::wstring isGravityText = L"Gravity: " + std::wstring(s_rigidBody->worldGravity ? L"On" : L"Off");
+            Button isGravity(lParam, 1, isGravityText.c_str());
         isGravity.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
 
-        Button plusMass = Button(lParam, 2, L"+Mass");
+            std::wstring plusMassText = L"+Mass: " + FormatLargeNumber(s_rigidBody->body.mass);
+            Button plusMass(lParam, 2, plusMassText.c_str());
         plusMass.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
 
-        Button minusMass = Button(lParam, 3, L"-Mass");
+            std::wstring minusMassText = L"-Mass: " + FormatLargeNumber(s_rigidBody->body.mass);
+            Button minusMass(lParam, 3, minusMassText.c_str());
         minusMass.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
 
-        Button plusRestitution = Button(lParam, 4, L"+Restitution");
+            std::wstring plusRestitutionText = L"+Restitution: " + FormatLargeNumber(s_rigidBody->body.restitution);
+            Button plusRestitution(lParam, 4, plusRestitutionText.c_str());
         plusRestitution.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
 
-        Button minusRestitution = Button(lParam, 5, L"-Restitution");
+            std::wstring minusRestitutionText = L"-Restitution: " + FormatLargeNumber(s_rigidBody->body.restitution);
+            Button minusRestitution(lParam, 5, minusRestitutionText.c_str());
         minusRestitution.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
         break;
     }
@@ -180,4 +186,25 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+std::wstring FormatLargeNumber(float number) {
+    const std::vector<std::wstring> suffixes = { L"", L"K", L"M", L"B", L"T", L"Q" };
+    int suffixIndex = 0;
+
+    while (std::abs(number) >= 1000.0f && suffixIndex < suffixes.size() - 1) {
+        number /= 1000.0f;
+        suffixIndex++;
+    }
+
+    std::wstringstream ss;
+    ss << std::fixed << std::setprecision(1);
+
+    if (std::abs(number) >= 100.0f) {
+        ss << std::setprecision(0);
+    }
+
+    ss << number << suffixes[suffixIndex];
+
+    return ss.str();
 }
