@@ -72,6 +72,9 @@
     <ClCompile Include="DropDownOptions.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="win_procedural_anim.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="DropDownOptions.h">
       <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="win_procedural_anim.h">
+      <Filter>Header Files\Ai</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
