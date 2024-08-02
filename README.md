@@ -37,7 +37,7 @@ For any inquiries, you can reach out to the project maintainer:
 
 **Name**: Eitan Katayev  
 **Email**: [etan9911@gmail.com](mailto:etan9911@gmail.com)  
-**GitHub**: [[EitanKatayev](https://github.com/EitanKatayev)](https://github.com/Snawyyy)
+**GitHub**: https://github.com/Snawyyy
 
 ---
 
