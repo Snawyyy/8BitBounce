@@ -14,7 +14,7 @@ Welcome to the **8BitBounce** project! This unique physics engine integrates dir
 
 ## Installation
 
-3. **Run the executable**:
+1. **Run the executable**:
    You can run the executable from the release to start the physics engine on your desktop.
 
 ## Usage
