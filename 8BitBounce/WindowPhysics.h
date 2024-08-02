@@ -2,6 +2,7 @@
 #include "RigidBody.h"
 #include "WindowIdManager.h"
 #include "MemoryManager.h"
+#include "WindowManager.h"
 
 class WindowPhysics : public RigidBody
 {
@@ -23,4 +24,5 @@ private:
 
     void ApplyCollisions();
     bool isColliding(const physicsObj& other);
+    bool isCollidingWithWindow(const WindowInfo& window);
 };

@@ -5,15 +5,15 @@ struct WindowData
     DesktopItemWindow* pWindow;
 };
 
-DesktopItemWindow::DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creature, HBITMAP hBitmap)
-    : hInstance(hInstance), hBitmap(hBitmap)
+DesktopItemWindow::DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creatureType, HBITMAP hBitmap)
+    : hInstance(hInstance), hBitmap(hBitmap), creature(creature)
 {
     BITMAP bitmap;
     GetObject(hBitmap, sizeof(BITMAP), &bitmap);
     int width = bitmap.bmWidth;
     int height = bitmap.bmHeight;
 
-    CreateTransparentWindow(width, height, creature);
+    CreateTransparentWindow(width, height);
     SetWindowTransparency();
 
     Show();
@@ -28,7 +28,7 @@ DesktopItemWindow::~DesktopItemWindow()
     }
 }
 
-void DesktopItemWindow::CreateTransparentWindow(int width, int height, Creature creatureType)
+void DesktopItemWindow::CreateTransparentWindow(int width, int height)
 {
     static bool classRegistered = false;
     if (!classRegistered)
@@ -61,12 +61,6 @@ void DesktopItemWindow::CreateTransparentWindow(int width, int height, Creature 
         // Handle error
         return;
     }
-
-    WindowData* pData = new WindowData;
-    pData->pWindow = this;
-    creature = creatureType;
-
-    SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pData));
 }
 
 void DesktopItemWindow::SetWindowTransparency()
@@ -86,7 +80,7 @@ LRESULT CALLBACK DesktopItemWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
         CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
         DesktopItemWindow* pWindow = reinterpret_cast<DesktopItemWindow*>(pCreate->lpCreateParams);
 
-        WindowData* pData = new WindowData;
+        pData = new WindowData;
         pData->pWindow = pWindow;
 
         pData->pWindow->pPhysics = new WindowPhysics(hWnd);
@@ -110,12 +104,13 @@ LRESULT CALLBACK DesktopItemWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
     switch (uMsg)
     {
     case WM_TIMER:
+    {
         if (wParam == TIMER_ID)
         {
             pData->pWindow->pPhysics->RunPhysics();
         }
         break;
-
+    }
     case WM_PAINT:
     {
         PAINTSTRUCT ps;
@@ -132,42 +127,45 @@ LRESULT CALLBACK DesktopItemWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
         EndPaint(hWnd, &ps);
         return 0;
     }
-
     case WM_MOUSEMOVE:
+    {
         pData->pWindow->pPhysics->TrackGrabbing();
         break;
-
+    }
     case WM_LBUTTONDOWN:
+    {
         pData->pWindow->pPhysics->Grab();
         SendMessage(hWnd, WM_USER + 2, 0, 0);
         break;
-
+    }
     case WM_LBUTTONUP:
+    {
         pData->pWindow->pPhysics->Ungrab();
         break;
-
+    }
     case WM_USER + 2:
-
+    {
         SetTimer(hWnd, TIMER_ID, 8, NULL);
         pData->pWindow->pPhysics->lastTime = GetTickCount64();
         break;
-
+    }
     case WM_RBUTTONDOWN:
-
+    {
         KillTimer(hWnd, TIMER_ID);
-        DropDownOptions(hWnd, pData->pWindow->pPhysics);
+        DropDownOptions(hWnd, *(pData->pWindow->pPhysics));
         break;
-
+    }
     case WM_DESTROY:
+    {
         KillTimer(hWnd, TIMER_ID);
+        delete pData->pWindow->pPhysics;
         delete pData;
         PostQuitMessage(0);
         return 0;
-
+    }
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
-
     return 0;
 }
 

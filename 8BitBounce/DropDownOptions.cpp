@@ -1,175 +1,249 @@
 #include "DropDownOptions.h"
 
-LRESULT CALLBACK DropDownOptionsProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+void DropDownOptions(HWND parent, WindowPhysics &rigidBody)
 {
-	static HBRUSH hBrush = NULL;
-	static RECT rect;
-	PAINTSTRUCT ps;
-	HDC hdc;
+    WindowPhysics* s_rigidBody = &rigidBody; // Store the reference to GameObject
 
-	POINT cursorPos;
-	GetCursorPos(&cursorPos);
-	WindowPhysics* pBall = reinterpret_cast<WindowPhysics*>(GetWindowLongPtr(GetParent(hWnd), GWLP_USERDATA));
+    HWND dropDownWindowHandle = NULL;
+    const wchar_t CLASS_NAME[] = L"DropDownOptionsClass";
 
-	switch (uMsg)
-	{
-	case WM_CREATE:
-	{
-		GetClientRect(hWnd, &rect);
-		int width = rect.right - rect.left;
-		int height = (rect.bottom - rect.top) / 6;
+    // Register the window class
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = CLASS_NAME;
 
-		HWND option1 = CreateWindowA("BUTTON",
-			"option1",
-			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, 0, width, height,
-			hWnd, (HMENU)2, NULL, NULL);
+    RegisterClass(&wc);
 
-		HWND option2 = CreateWindowA("BUTTON",
-			"option2",
-			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, height, width, height,
-			hWnd, (HMENU)3, NULL, NULL);
+    int windowWidth = SCREEN_WIDTH / 10;
+    int windowHeight = BUTTON_HEIGHT * 5;
 
-		HWND option3 = CreateWindowA("BUTTON",
-			"option3",
-			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, height * 2, width, height,
-			hWnd, (HMENU)4, NULL, NULL);
+    POINT cursorPos;
+    GetCursorPos(&cursorPos);
 
-		HWND option4 = CreateWindowA("BUTTON",
-			"option4",
-			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, height * 3, width, height,
-			hWnd, (HMENU)4, NULL, NULL);
+    // Create the window
+    dropDownWindowHandle = CreateWindowEx(
+        WS_EX_TOPMOST | WS_EX_TOOLWINDOW, // Always on top and without a taskbar button
+        CLASS_NAME,
+        L"Drop Down Options",
+        WS_POPUP, // Borderless window
+        cursorPos.x, cursorPos.y, windowWidth, windowHeight,
+        parent,
+        NULL,
+        GetModuleHandle(NULL),
+        NULL
+    );
 
-		HWND option5 = CreateWindowA("BUTTON",
-			"option5",
-			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, height * 4, width, height,
-			hWnd, (HMENU)4, NULL, NULL);
+    if (dropDownWindowHandle == NULL)
+    {
+        return;
+    }
 
-		HWND option6 = CreateWindowA("BUTTON",
-			"option6",
-			WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
-			0, height * 5, width, height,
-			hWnd, (HMENU)4, NULL, NULL);
+    SetWindowLongPtr(dropDownWindowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(s_rigidBody));
 
-		SetFocus(hWnd);
-		break;
-	}
-	case WM_DRAWITEM:
-	{
-		Button option1(lParam, 2, L"Gravity");
-		option1.Draw(RGB(255, 255, 255), RGB(1, 0, 0));
+    // Show the window
+    ShowWindow(dropDownWindowHandle, SW_SHOW);
 
-		Button option2(lParam, 3, L"+Mass");
-		option2.Draw(RGB(255, 255, 255), RGB(1, 0, 0));
-
-		Button option3(lParam, 4, L"-Mass");
-		option3.Draw(RGB(255, 255, 255), RGB(1, 0, 0));
-
-		break;
-	}
-	case WM_COMMAND:
-	{
-		switch (LOWORD(wParam))
-		{
-		case 2:
-		{
-			pBall->worldGravity = !pBall->worldGravity;
-			break;
-		}
-		case 3:
-		{
-			pBall->body.mass *= 2;
-			break;
-		}
-		case 4:
-		{
-			pBall->body.mass /= 2;
-			break;
-		}
-		default:
-			break;
-		}
-		break;	
-	{
-	}
-	}
-	case WM_PAINT:
-	{
-		hdc = BeginPaint(hWnd, &ps);
-		GetClientRect(hWnd, &rect);
-
-		hBrush = CreateSolidBrush(RGB(255, 255, 255));
-		FrameRect(hdc, &rect, hBrush);
-		FillRect(hdc, &rect, hBrush);
-		EndPaint(hWnd, &ps);
-
-		break;
-	}
-	case WM_ACTIVATE:
-	{
-		if (LOWORD(wParam) == WA_INACTIVE) 
-		{
-			SendMessage(GetParent(hWnd), WM_USER + 2, 0, 0);
-
-			DestroyWindow(hWnd);
-		}
-		break;
-	}
-	case WM_DESTROY:
-	{
-		// Clean up resources
-		DeleteObject(hBrush);
-		DestroyWindow(hWnd);
-		break;
-	}
-	default:
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
-	}
-
-	return 0;
+    // Run the message loop
+    MSG msg = {};
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 }
 
-void DropDownOptions(HWND parent)
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	HINSTANCE m_hinstance = GetModuleHandle(nullptr);
-	const wchar_t* CLASS_NAME = L"DropDownOptionsClass";
+    WindowPhysics* s_rigidBody = reinterpret_cast<WindowPhysics*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
-	WNDCLASS wndClass = {};
-	wndClass.lpszClassName = CLASS_NAME;
-	wndClass.hInstance = m_hinstance;
-	wndClass.hIcon = LoadIcon(NULL, IDI_WINLOGO);
-	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndClass.lpfnWndProc = DropDownOptionsProc;
-	wndClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
-	RegisterClass(&wndClass);
+    switch (uMsg)
+    {
+    case WM_CREATE:
+    {
+        SetTimer(hWnd, REDRAW_TIMER_ID, 100, NULL);
 
-	DWORD style = WS_POPUP | WS_CHILD;
+        RECT clientRect;
+        GetClientRect(hWnd, &clientRect);
+        int buttonWidth = clientRect.right - clientRect.left;
 
-	POINT cursorPos;
-	GetCursorPos(&cursorPos);
+        int yOffset = 0;
 
-	int height = GetSystemMetrics(SM_CYSCREEN) / 6;
-	int width = height / 2;
+        HWND isGravityButton = CreateWindowA("BUTTON", "", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
+            0, yOffset, buttonWidth, BUTTON_HEIGHT, hWnd, (HMENU)1, NULL, NULL);
+        yOffset += BUTTON_HEIGHT;
 
-	HWND hWnd = CreateWindowEx(
-		WS_EX_TOPMOST,
-		CLASS_NAME,
-		L"Ball",
-		style,
-		cursorPos.x,
-		cursorPos.y,
-		width,
-		height,
-		parent,
-		NULL,
-		m_hinstance,
-		NULL
-	);
+        HWND plusMassButton = CreateWindowA("BUTTON", "", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
+            0, yOffset, buttonWidth, BUTTON_HEIGHT, hWnd, (HMENU)2, NULL, NULL);
+        yOffset += BUTTON_HEIGHT;
 
-	ShowWindow(hWnd, SW_SHOW);
+        HWND minusMassButton = CreateWindowA("BUTTON", "", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
+            0, yOffset, buttonWidth, BUTTON_HEIGHT, hWnd, (HMENU)3, NULL, NULL);
+        yOffset += BUTTON_HEIGHT;
 
+        HWND plusRestitutionButton = CreateWindowA("BUTTON", "", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
+            0, yOffset, buttonWidth, BUTTON_HEIGHT, hWnd, (HMENU)4, NULL, NULL);
+        yOffset += BUTTON_HEIGHT;
+
+        HWND minusRestitutionButton = CreateWindowA("BUTTON", "", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW,
+            0, yOffset, buttonWidth, BUTTON_HEIGHT, hWnd, (HMENU)5, NULL, NULL);
+    }
+    case WM_TIMER:
+    {
+        if (wParam == REDRAW_TIMER_ID)
+        {
+            InvalidateRect(hWnd, NULL, TRUE);
+        }
+        break;
+    }
+    case WM_DRAWITEM:
+    {
+        if (s_rigidBody != nullptr)
+        {
+            std::wstring isGravityText = L"Gravity: " + std::wstring(s_rigidBody->worldGravity ? L"On" : L"Off");
+            Button isGravity(lParam, 1, isGravityText.c_str());
+        isGravity.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
+
+            std::wstring plusMassText = L"+Mass: " + FormatLargeNumber(s_rigidBody->body.mass);
+            Button plusMass(lParam, 2, plusMassText.c_str());
+        plusMass.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
+
+            std::wstring minusMassText = L"-Mass: " + FormatLargeNumber(s_rigidBody->body.mass);
+            Button minusMass(lParam, 3, minusMassText.c_str());
+        minusMass.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
+
+            std::wstring plusRestitutionText = L"+Restitution: " + FormatLargeNumber(s_rigidBody->body.restitution);
+            Button plusRestitution(lParam, 4, plusRestitutionText.c_str());
+        plusRestitution.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
+
+            std::wstring minusRestitutionText = L"-Restitution: " + FormatLargeNumber(s_rigidBody->body.restitution);
+            Button minusRestitution(lParam, 5, minusRestitutionText.c_str());
+        minusRestitution.Draw(DEFULT_BUTTON_COLOR, RGB(0, 0, 1));
+        }
+
+        break;
+    }
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        RECT rect;
+        GetWindowRect(hWnd, &rect);
+
+        // Create a compatible DC for double-buffering
+        HDC hdcMem = CreateCompatibleDC(hdc);
+        HBITMAP hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+        HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hbmMem);
+
+        // Capture the current window content into a bitmap
+        BitBlt(hdcMem, 0, 0, rect.right, rect.bottom, hdc, 0, 0, SRCCOPY);
+
+        // Create another compatible DC for drawing
+        HDC hdcBuffer = CreateCompatibleDC(hdc);
+        HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+        HBITMAP hbmBufferOld = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+
+        // Draw the captured screenshot onto the buffer
+        BitBlt(hdcBuffer, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
+
+        // Copy the off-screen buffer to the screen
+        BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
+
+        // Clean up
+        SelectObject(hdcBuffer, hbmBufferOld);
+        DeleteObject(hbmBuffer);
+        DeleteDC(hdcBuffer);
+
+        SelectObject(hdcMem, hbmOld);
+        DeleteObject(hbmMem);
+        DeleteDC(hdcMem);
+
+        EndPaint(hWnd, &ps);
+        break;
+    }
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case 1: // isGravity button
+        {
+            s_rigidBody->worldGravity = !s_rigidBody->worldGravity;
+            break;
+        }
+        case 2: // plusMass button
+        {
+            s_rigidBody->body.mass = s_rigidBody->body.mass * 2;
+            break;
+        }
+        case 3: // minusMass button
+        {
+            s_rigidBody->body.mass = s_rigidBody->body.mass / 2;
+            break;
+        }
+        case 4: // plusRestitution button
+        {
+            if (s_rigidBody->body.restitution < 1)
+            {
+                s_rigidBody->body.restitution = s_rigidBody->body.restitution + 0.1;
+            }
+            break;
+        }
+        case 5: // minusRestitution button
+        {
+            if (s_rigidBody->body.restitution > 0)
+            {
+                s_rigidBody->body.restitution = s_rigidBody->body.restitution - 0.1;
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case WM_ACTIVATE:
+    {
+        if (LOWORD(wParam) == WA_INACTIVE)
+        {
+            SendMessage(GetParent(hWnd), WM_USER + 2, 0, 0);
+            DestroyWindow(hWnd);
+            return 0;
+        }
+        break;
+    }
+    case WM_CLOSE:
+    {
+        DestroyWindow(hWnd);
+        return 0;
+    }
+    case WM_DESTROY:
+    {
+        SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+        PostQuitMessage(0);
+        return 0;
+    }
+    }
+
+    return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+std::wstring FormatLargeNumber(float number) {
+    const std::vector<std::wstring> suffixes = { L"", L"K", L"M", L"B", L"T", L"Q" };
+    int suffixIndex = 0;
+
+    while (std::abs(number) >= 1000.0f && suffixIndex < suffixes.size() - 1) {
+        number /= 1000.0f;
+        suffixIndex++;
+    }
+
+    std::wstringstream ss;
+    ss << std::fixed << std::setprecision(1);
+
+    if (std::abs(number) >= 100.0f) {
+        ss << std::setprecision(0);
+    }
+
+    ss << number << suffixes[suffixIndex];
+
+    return ss.str();
 }

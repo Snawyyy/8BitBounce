@@ -1,9 +1,9 @@
 #pragma once
 #include <Windows.h>
-#include "BallWindow.h"
 #include "UiElements.h"
 #include <thread>
 #include "MemoryManager.h"
+#include "DesktopItemWindow.h"
 
 class WorldWindow
 {

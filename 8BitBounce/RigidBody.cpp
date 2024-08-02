@@ -17,23 +17,19 @@ void RigidBody::CalculateTime()
     lastTime = currentTime;
 }
 
-void RigidBody::UpdatePosition()
+void RigidBody::UpdatePosition() 
 {
     preBodyX = body.pos.x;
     preBodyY = body.pos.y;
 
-    // Calculate acceleration from the applied force
     Vector2 acceleration = { force.x / body.mass, force.y / body.mass };
 
-    // Update velocity based on acceleration
     body.velocity.x += acceleration.x * deltaTime;
     body.velocity.y += acceleration.y * deltaTime;
 
-    // Update position based on velocity
     body.pos.x += body.velocity.x * deltaTime;
     body.pos.y += body.velocity.y * deltaTime;
 
-    // Reset the applied force after updating the position
     force = Vector2{ 0.0f, 0.0f };
 }
 
@@ -75,29 +71,25 @@ void RigidBody::BorderCollisions()
     // Collision with left and right of screen
     if (body.pos.x + body.radius * 2 > screenWidth)
     {
-        body.velocity.x = -(body.velocity.x * dampingFactor * restitution); // Apply friction and restitution on bounce
+        body.velocity.x = -(body.velocity.x * dampingFactor * body.restitution); // Apply friction and restitution on bounce
         body.pos.x = screenWidth - body.radius * 2; // Prevents the body from getting stuck right to the screen
-        force.x += 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
     if (body.pos.x < 0)
     {
-        body.velocity.x = -(body.velocity.x * dampingFactor * restitution); // Apply friction and restitution on bounce
+        body.velocity.x = -(body.velocity.x * dampingFactor * body.restitution); // Apply friction and restitution on bounce
         body.pos.x = 0; // Prevents the body from getting stuck left to the screen
-        force.x -= 2.0f * body.velocity.x * body.mass; // Apply impulse force
     }
 
     // Collision with top and bottom of screen
     if (body.pos.y + body.radius * 2 > screenHeight - taskbarHeight)
     {
-        body.velocity.y = -(body.velocity.y * dampingFactor * restitution);
+        body.velocity.y = -(body.velocity.y * dampingFactor * body.restitution);
         body.pos.y = screenHeight - taskbarHeight - body.radius * 2; // Prevents the body from getting stuck below the screen
-        force.y += 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
     if (body.pos.y < 0)
     {
-        body.velocity.y = -(body.velocity.y * dampingFactor * restitution);
+        body.velocity.y = -(body.velocity.y * dampingFactor * body.restitution);
         body.pos.y = 0; // Prevents the body from getting stuck above the screen
-        force.y -= 2.0f * body.velocity.y * body.mass; // Apply impulse force
     }
 }
 
@@ -129,40 +121,96 @@ int RigidBody::GetTaskbarHeight()
     }
 }
 
-void RigidBody::CalculateCollisions(physicsObj other)
+void RigidBody::CalculateCollisions(physicsObj& other)
 {
-    float directionX = body.pos.x - other.pos.x;
-    float directionY = body.pos.y - other.pos.y;
 
-    float distance = sqrt(directionX * directionX + directionY * directionY);
+    Vector2 relativeVelocity = {
+        other.velocity.x - body.velocity.x,
+        other.velocity.y - body.velocity.y
+    };
 
-    if (distance != 0) {
-        float overlap = (body.radius + other.radius) - distance;
+    Vector2 relativePosition = {
+        other.pos.x - body.pos.x,
+        other.pos.y - body.pos.y
+    };
 
-        float normalizedX = directionX / distance;
-        float normalizedY = directionY / distance;
+    float distSq = relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y;
 
-        body.pos.x += overlap * normalizedX;
-        body.pos.y += overlap * normalizedY;
+    if (distSq == 0.0f) return;
 
-        // Improved physics for velocity calculation
-        float relativeVelocityX = body.velocity.x - other.velocity.x;
-        float relativeVelocityY = body.velocity.y - other.velocity.y;
+    Vector2 normal = {
+        relativePosition.x / sqrt(distSq),
+        relativePosition.y / sqrt(distSq)
+    };
 
-        float dotProduct = relativeVelocityX * normalizedX + relativeVelocityY * normalizedY;
-
-        if (dotProduct > 0) return; // Objects are moving apart, no collision response needed
-
-        float impulse = -(1 + restitution) * dotProduct;
-        impulse /= 1 / body.mass + 1 / other.mass;
-
-        float impulseX = impulse * normalizedX;
-        float impulseY = impulse * normalizedY;
-
-        body.velocity.x += impulseX / body.mass;
-        body.velocity.y += impulseY / body.mass;
+    float penetrationDepth = (body.radius + other.radius) - sqrt(distSq);
+    if (penetrationDepth > 0) {
+        float correctionFactor = 0.5f * penetrationDepth / (body.mass + other.mass);
+        body.pos.x -= correctionFactor * other.mass * normal.x;
+        body.pos.y -= correctionFactor * other.mass * normal.y;
+        other.pos.x += correctionFactor * body.mass * normal.x;
+        other.pos.y += correctionFactor * body.mass * normal.y;
     }
+
+    float velocityAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
+
+    if (velocityAlongNormal > 0) return;
+
+    float impactFactor = (other.restitution + body.restitution) * velocityAlongNormal / (body.mass + other.mass);
+
+    body.velocity.x += impactFactor * other.mass * normal.x;
+    body.velocity.y += impactFactor * other.mass * normal.y;
+    other.velocity.x -= impactFactor * body.mass * normal.x;
+    other.velocity.y -= impactFactor * body.mass * normal.y;
 }
+
+void RigidBody::CalculateCollisionsWithWindow(const WindowInfo& window)
+{
+    RECT windowRect = window.rect;
+
+    float closestX = Clamp(body.pos.x, (float)windowRect.left - body.radius, (float)windowRect.right - body.radius);
+    float closestY = Clamp(body.pos.y, (float)windowRect.top - body.radius, (float)windowRect.bottom - body.radius);
+
+    Vector2 relativePosition = {
+        closestX - body.pos.x,
+        closestY - body.pos.y
+    };
+
+    float distSq = relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y;
+
+    if (distSq == 0.0f) return;
+
+    Vector2 normal = {
+        relativePosition.x / sqrt(distSq),
+        relativePosition.y / sqrt(distSq)
+    };
+
+    float penetrationDepth = body.radius - sqrt(distSq);
+    if (penetrationDepth > 0) {
+        // For window collision, we only move the body (the window doesn't move)
+        float correctionFactor = penetrationDepth;
+        body.pos.x -= correctionFactor * normal.x;
+        body.pos.y -= correctionFactor * normal.y;
+    }
+
+    // Treat the window as an object with infinite mass
+    Vector2 relativeVelocity = {
+        -body.velocity.x,
+        -body.velocity.y
+    };
+
+    float velocityAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
+
+    if (velocityAlongNormal > 0) return;
+
+    float impactFactor = (1 + body.restitution) * velocityAlongNormal;
+
+    body.velocity.x += impactFactor * normal.x;
+    body.velocity.y += impactFactor * normal.y;
+
+    ApplyFriction();
+}
+
 
 void RigidBody::RunPhysics()
 {
@@ -228,7 +276,7 @@ void RigidBody::Ungrab()
     ReleaseCapture();
 }
 
-int RigidBody::Clamp(int num, int min, int max)
+float RigidBody::Clamp(float num, float min, float max)
 {
     if (num < min) {
         return min;
