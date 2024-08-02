@@ -106,7 +106,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -128,10 +128,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp" />
-    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Creature.cpp" />
+    <ClCompile Include="DesktopItemWindow.cpp" />
+    <ClCompile Include="DropDownOptions.cpp" />
+    <ClCompile Include="MemoryManager.cpp" />
+    <ClCompile Include="Movements.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="WindowIdManager.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
+    <ClCompile Include="WindowPhysics.cpp" />
+    <ClCompile Include="win_procedural_anim.cpp" />
+    <ClCompile Include="WorldWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ball.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Creature.h" />
+    <ClInclude Include="DesktopItemWindow.h" />
+    <ClInclude Include="DropDownOptions.h" />
+    <ClInclude Include="MemoryManager.h" />
+    <ClInclude Include="Movements.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="Ui.h" />
+    <ClInclude Include="UiElements.h" />
+    <ClInclude Include="UiSettings.h" />
+    <ClInclude Include="WindowIdManager.h" />
+    <ClInclude Include="WindowManager.h" />
+    <ClInclude Include="WindowPhysics.h" />
+    <ClInclude Include="win_procedural_anim.h" />
+    <ClInclude Include="WorldWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

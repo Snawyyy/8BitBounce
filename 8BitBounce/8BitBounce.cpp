@@ -2,12 +2,12 @@
 //
 
 #include <iostream>
-#include "Ball.h"
+#include "WorldWindow.h"
 using namespace std;
 
-int main()
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
 {
-    Window* pWindow = new Window();
+    WorldWindow* pWindow = new WorldWindow();
 
     bool running = true;
     while (running)

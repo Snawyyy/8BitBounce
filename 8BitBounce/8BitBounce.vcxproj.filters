@@ -13,18 +13,117 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Ui">
+      <UniqueIdentifier>{2f8f27a0-ab97-43d6-9acb-faba3f1b0054}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{a15f3836-6f4c-43b2-8ef9-3f09b29b3d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{b10c3d44-2078-4a98-a466-2970a2d731db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Windows">
+      <UniqueIdentifier>{15f10c8e-cae0-4553-83cf-eae5946ca051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Windows">
+      <UniqueIdentifier>{97fb186b-861d-45d4-aefd-4a7be28482a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Ai">
+      <UniqueIdentifier>{6f621962-afdb-4924-8cb4-771c0a19764b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Ai">
+      <UniqueIdentifier>{9bac7bde-7139-460c-bbea-318d4022724c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="8BitBounce.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ball.cpp">
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowPhysics.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowIdManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DesktopItemWindow.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldWindow.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
+    <ClCompile Include="Movements.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DropDownOptions.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="win_procedural_anim.cpp">
+      <Filter>Source Files\Ai</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ball.h">
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui.h">
+      <Filter>Header Files\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiElements.h">
+      <Filter>Header Files\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiSettings.h">
+      <Filter>Header Files\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowPhysics.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowIdManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldWindow.h">
+      <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="DesktopItemWindow.h">
+      <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>Header Files\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="Movements.h">
+      <Filter>Header Files\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropDownOptions.h">
+      <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="win_procedural_anim.h">
+      <Filter>Header Files\Ai</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
