@@ -1,7 +1,7 @@
 #include "WorldWindow.h"
 
 void CreateWindowThread() {
-	HBITMAP hBitmap = (HBITMAP)LoadImageW(nullptr, L"C:\\Users\\Snawy\\Desktop\\Drawing\\GameDev\\BitBlade\\HookBar4.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	HBITMAP hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP1));;
 	if (!hBitmap) {
 		MessageBox(nullptr, L"Failed to load bitmap", L"Error", MB_ICONERROR);
 		return;

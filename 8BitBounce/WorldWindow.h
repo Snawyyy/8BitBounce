@@ -4,6 +4,7 @@
 #include <thread>
 #include "MemoryManager.h"
 #include "DesktopItemWindow.h"
+#include "resource.h"
 
 class WorldWindow
 {
