@@ -46,20 +46,12 @@ int WindowPhysics::GetId()
 
 void WindowPhysics::ApplyCollisions()
 {
+    // Get the list of other objects and windows once
     WindowIdManager& idManager = WindowIdManager::getInstance();
     MemoryManager& worldObjects = MemoryManager::getInstance();
+    std::vector<WindowInfo> rects = GetWindowsInfo();
 
-    for (size_t i = 1; i <= idManager.objectsCount; i++)
-    {
-        if (i != GetId())
-        {
-            int bodyRadius = width / 2;
-            int otherBodyRadius = width / 2;
-
-            std::vector<WindowInfo> rects;
-            rects = GetWindowsInfo();
-
-            physicsObj other = worldObjects.ReadMemory(i);
+    // Handle collisions with windows
             for (const auto& wi : rects)
             {
                 if (isCollidingWithWindow(wi))
@@ -68,11 +60,19 @@ void WindowPhysics::ApplyCollisions()
                 }
             }
 
+    // Handle collisions with other rigid bodies
+    for (size_t i = 1; i <= idManager.objectsCount; i++)
+    {
+        if (i != GetId())
+        {
+            physicsObj other = worldObjects.ReadMemory(i);
 
             if (isColliding(other))
             {
                 CalculateCollisions(other);
             }
+
+            // Apply gravity if objects are close enough
             double distanceY = std::abs(body.pos.y - other.pos.y);
             double distanceX = std::abs(body.pos.x - other.pos.x);
 
@@ -84,6 +84,7 @@ void WindowPhysics::ApplyCollisions()
     }
 }
 
+
 bool WindowPhysics::isColliding(const physicsObj& other)
 {
     float dx = body.pos.x - other.pos.x;
@@ -94,14 +95,16 @@ bool WindowPhysics::isColliding(const physicsObj& other)
     float sumOfRadii = body.radius + other.radius;
     float radiusSquared = sumOfRadii * sumOfRadii;
 
-    return distanceSquared <= radiusSquared;
+    // Add a small epsilon to handle floating-point inaccuracies
+    const float epsilon = 1e-6f;
+
+    return distanceSquared < radiusSquared - epsilon;
 }
 
 bool WindowPhysics::isCollidingWithWindow(const WindowInfo& window)
 {
     float closestX = Clamp(body.pos.x, (float)window.rect.left - body.radius, (float)window.rect.right - body.radius);
     float closestY = Clamp(body.pos.y, (float)window.rect.top - body.radius, (float)window.rect.bottom - body.radius);
-
 
     float distanceX = body.pos.x - closestX;
     float distanceY = body.pos.y - closestY;
