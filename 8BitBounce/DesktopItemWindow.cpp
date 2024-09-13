@@ -6,7 +6,7 @@ struct WindowData
 };
 
 DesktopItemWindow::DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature creatureType, HBITMAP hBitmap)
-    : hInstance(hInstance), hBitmap(hBitmap), creature(creature)
+    : hInstance(hInstance), hBitmap(hBitmap), creature(creatureType), pDragLineWindow(nullptr)
 {
     BITMAP bitmap;
     GetObject(hBitmap, sizeof(BITMAP), &bitmap);
@@ -22,6 +22,12 @@ DesktopItemWindow::DesktopItemWindow(HINSTANCE hInstance, int nCmdShow, Creature
 
 DesktopItemWindow::~DesktopItemWindow()
 {
+    if (pDragLineWindow)
+    {
+        delete pDragLineWindow;
+        pDragLineWindow = nullptr;
+    }
+
     if (hWnd)
     {
         DestroyWindow(hWnd);
@@ -127,20 +133,65 @@ LRESULT CALLBACK DesktopItemWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
         EndPaint(hWnd, &ps);
         return 0;
     }
-    case WM_MOUSEMOVE:
-    {
-        pData->pWindow->pPhysics->TrackGrabbing();
-        break;
-    }
     case WM_LBUTTONDOWN:
     {
         pData->pWindow->pPhysics->Grab();
-        SendMessage(hWnd, WM_USER + 2, 0, 0);
+
+        // Get the cursor position
+        POINT cursorPos;
+        GetCursorPos(&cursorPos);
+
+        // Create the DragLineWindow
+        if (!pData->pWindow->pDragLineWindow)
+        {
+            pData->pWindow->pDragLineWindow = new DragLineWindow(pData->pWindow->hInstance);
+        }
+
+        SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+        pData->pWindow->pDragLineWindow->Show();
+
+        pData->pWindow->pDragLineWindow->UpdatePosition(cursorPos, cursorPos);
+
+        break;
+    }
+
+    case WM_MOUSEMOVE:
+    {
+        pData->pWindow->pPhysics->TrackGrabbing();
+
+        if (pData->pWindow->pPhysics->isDragging)
+        {
+            // Get the cursor position
+            POINT cursorPos;
+            GetCursorPos(&cursorPos);
+
+            // Update the DragLineWindow position
+            if (pData->pWindow->pDragLineWindow)
+            {
+                // Calculate the start point based on the window's current position and click offset
+                POINT startPoint;
+                startPoint.x = static_cast<LONG>(pData->pWindow->pPhysics->body.pos.x + pData->pWindow->pPhysics->clickOffset.x);
+                startPoint.y = static_cast<LONG>(pData->pWindow->pPhysics->body.pos.y + pData->pWindow->pPhysics->clickOffset.y);
+
+                pData->pWindow->pDragLineWindow->UpdatePosition(startPoint, cursorPos);
+            }
+        }
+
         break;
     }
     case WM_LBUTTONUP:
     {
         pData->pWindow->pPhysics->Ungrab();
+
+        // Hide and destroy the DragLineWindow
+        if (pData->pWindow->pDragLineWindow)
+        {
+            pData->pWindow->pDragLineWindow->Hide();
+            delete pData->pWindow->pDragLineWindow;
+            pData->pWindow->pDragLineWindow = nullptr;
+        }
+        SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+
         break;
     }
     case WM_USER + 2:

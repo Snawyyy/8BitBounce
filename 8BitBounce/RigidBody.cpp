@@ -332,20 +332,20 @@ void RigidBody::Grab()
 {
     POINT cursorPos;
     GetCursorPos(&cursorPos);
-
-    float cursorX = static_cast<float>(cursorPos.x);
-    float cursorY = static_cast<float>(cursorPos.y);
-
+    clickOffset.x = cursorPos.x - body.pos.x;
+    clickOffset.y = cursorPos.y - body.pos.y;
     isDragging = TRUE;
 
-    clickOffset.x = cursorX - body.pos.x;
-    clickOffset.y = cursorY - body.pos.y;
+    // Store the initial click position
+    initialClickPosition = cursorPos;
 
-    mouseJointTarget.x = cursorX - clickOffset.x;
-    mouseJointTarget.y = cursorY - clickOffset.y;
+    // Set the target position for the mouse joint
+    mouseJointTarget.x = body.pos.x;
+    mouseJointTarget.y = body.pos.y;
 
     SetCapture(hWnd);
 }
+
 
 void RigidBody::TrackGrabbing()
 {

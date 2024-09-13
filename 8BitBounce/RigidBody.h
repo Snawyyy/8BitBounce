@@ -23,8 +23,6 @@ struct physicsObj
 class RigidBody : public Physics
 {
 private:
-    bool isDragging = false;
-    POINT clickOffset;
     Vector2 mouseJointTarget;
 
     // Previous body x,y coords
@@ -57,6 +55,9 @@ private:
 
 public:
     physicsObj body;
+    bool isDragging = false;
+    POINT initialClickPosition;
+    POINT clickOffset;
 
     Vector2 force = { 0.0f, 0.0f };
     bool worldGravity = true;

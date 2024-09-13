@@ -131,8 +131,10 @@
     <ClCompile Include="8BitBounce.cpp" />
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="DesktopItemWindow.cpp" />
+    <ClCompile Include="DragLineWindow.cpp" />
     <ClCompile Include="DropDownOptions.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
+    <ClCompile Include="Messages.h" />
     <ClCompile Include="Movements.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -146,6 +148,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Creature.h" />
     <ClInclude Include="DesktopItemWindow.h" />
+    <ClInclude Include="DragLineWindow.h" />
     <ClInclude Include="DropDownOptions.h" />
     <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="Movements.h" />

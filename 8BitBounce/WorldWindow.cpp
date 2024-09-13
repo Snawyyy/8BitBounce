@@ -29,6 +29,16 @@ void CreateWindowThread() {
 	DeleteObject(hBitmap);
 }
 
+struct DragInfo
+{
+	bool isDragging;
+	POINT startPoint;
+	POINT currentPoint;
+	HWND draggingWindow;
+};
+
+static DragInfo dragInfo = { false, {0, 0}, {0, 0}, NULL };
+
 LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	static HBRUSH hBrush = NULL;
@@ -80,8 +90,28 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		FrameRect(hdc, &rect, hBrush);
 		FillRect(hdc, &rect, hBrush);
 		*/
+		if (dragInfo.isDragging)
+		{
+			// Convert screen coordinates to client coordinates
+			POINT startPointClient = dragInfo.startPoint;
+			POINT currentPointClient = dragInfo.currentPoint;
 
-		DeleteObject(hBrush);
+			ScreenToClient(hWnd, &startPointClient);
+			ScreenToClient(hWnd, &currentPointClient);
+
+			// Set up the pen
+			HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 255, 0)); // Green line
+			HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
+
+			// Draw the line
+			MoveToEx(hdc, startPointClient.x, startPointClient.y, NULL);
+			LineTo(hdc, currentPointClient.x, currentPointClient.y);
+
+			// Clean up
+			SelectObject(hdc, hOldPen);
+			DeleteObject(hPen);
+		}
+
 		EndPaint(hWnd, &ps);
 
 		break;
@@ -107,6 +137,46 @@ LRESULT CALLBACK WorldWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	{
 		break;
 	}
+	case WM_USER_START_DRAG:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+
+		dragInfo.isDragging = true;
+		dragInfo.startPoint.x = x;
+		dragInfo.startPoint.y = y;
+		dragInfo.currentPoint = dragInfo.startPoint;
+		dragInfo.draggingWindow = (HWND)wParam;
+
+		InvalidateRect(hWnd, NULL, TRUE);
+
+		break;
+	}
+	case WM_USER_DRAGGING:
+	{
+		if (dragInfo.isDragging)
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+
+			dragInfo.currentPoint.x = x;
+			dragInfo.currentPoint.y = y;
+
+			InvalidateRect(hWnd, NULL, TRUE);
+		}
+
+		break;
+	}
+	case WM_USER_END_DRAG:
+	{
+		dragInfo.isDragging = false;
+		dragInfo.draggingWindow = NULL;
+
+		InvalidateRect(hWnd, NULL, TRUE);
+
+		break;
+	}
+
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);
