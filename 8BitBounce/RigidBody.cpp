@@ -59,11 +59,54 @@ void RigidBody::ApplyGravity(physicsObj other)
     }
 }
 
+void RigidBody::ApplyAirResistance()
+{
+    // Calculate the speed (magnitude of velocity)
+    float speed = sqrt(body.velocity.x * body.velocity.x + body.velocity.y * body.velocity.y);
+
+
+    if (speed > 0.0f)
+    {
+        // Calculate the drag force magnitude
+        float dragMagnitude = 0.5f * airDensity * speed * speed * dragCoefficient * crossSectionalArea;
+
+        // Calculate the drag force components (opposite to velocity direction)
+        float dragForceX = -(body.velocity.x / speed) * dragMagnitude;
+        float dragForceY = -(body.velocity.y / speed) * dragMagnitude;
+
+        // Apply the drag force to the total force
+        force.x += dragForceX;
+        force.y += dragForceY;
+    }
+}
+
 void RigidBody::ApplyFriction()
 {
-    Vector2 frictionForce = Vector2{ -body.velocity.x * friction, -body.velocity.y * friction };
-    force.x += frictionForce.x;
-    force.y += frictionForce.y;
+    // Calculate the normal force (assuming vertical gravity)
+    float normalForce = body.mass * gravityAcceleration;
+
+    // Calculate the maximum friction force magnitude
+    float maxFrictionForce = frictionCoefficient * normalForce;
+
+    // Get the magnitude of the velocity
+    float speed = sqrt(body.velocity.x * body.velocity.x + body.velocity.y * body.velocity.y);
+
+    if (speed > 0.1f)
+    {
+        // Calculate the friction force components
+        float frictionForceX = -(body.velocity.x / speed) * maxFrictionForce;
+        float frictionForceY = -(body.velocity.y / speed) * maxFrictionForce;
+
+        // Apply the friction force
+        force.x += frictionForceX;
+        force.y += frictionForceY;
+}
+    else
+    {
+        // Stop the object completely
+        body.velocity.x = 0.0f;
+        body.velocity.y = 0.0f;
+    }
 }
 
 void RigidBody::BorderCollisions()
@@ -73,11 +116,13 @@ void RigidBody::BorderCollisions()
     {
         body.velocity.x = -(body.velocity.x * dampingFactor * body.restitution); // Apply friction and restitution on bounce
         body.pos.x = screenWidth - body.radius * 2; // Prevents the body from getting stuck right to the screen
+        ApplyFriction();
     }
     if (body.pos.x < 0)
     {
         body.velocity.x = -(body.velocity.x * dampingFactor * body.restitution); // Apply friction and restitution on bounce
         body.pos.x = 0; // Prevents the body from getting stuck left to the screen
+        ApplyFriction();
     }
 
     // Collision with top and bottom of screen
@@ -85,11 +130,13 @@ void RigidBody::BorderCollisions()
     {
         body.velocity.y = -(body.velocity.y * dampingFactor * body.restitution);
         body.pos.y = screenHeight - taskbarHeight - body.radius * 2; // Prevents the body from getting stuck below the screen
+        ApplyFriction();
     }
     if (body.pos.y < 0)
     {
         body.velocity.y = -(body.velocity.y * dampingFactor * body.restitution);
         body.pos.y = 0; // Prevents the body from getting stuck above the screen
+        ApplyFriction();
     }
 }
 
@@ -219,6 +266,8 @@ void RigidBody::RunPhysics()
     if (worldGravity) 
     {
         ApplyWorldGravity(); 
+    }
+    ApplyAirResistance();
         ApplyFriction();
     }
     Draggable();
