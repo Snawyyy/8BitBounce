@@ -190,7 +190,7 @@ LRESULT CALLBACK DesktopItemWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
             delete pData->pWindow->pDragLineWindow;
             pData->pWindow->pDragLineWindow = nullptr;
         }
-        SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+        SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
         break;
     }
