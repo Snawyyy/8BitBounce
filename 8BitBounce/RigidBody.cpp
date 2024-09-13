@@ -170,45 +170,72 @@ int RigidBody::GetTaskbarHeight()
 
 void RigidBody::CalculateCollisions(physicsObj& other)
 {
-
-    Vector2 relativeVelocity = {
-        other.velocity.x - body.velocity.x,
-        other.velocity.y - body.velocity.y
-    };
-
+    // Calculate relative position
     Vector2 relativePosition = {
         other.pos.x - body.pos.x,
         other.pos.y - body.pos.y
     };
 
-    float distSq = relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y;
+    float distanceSquared = relativePosition.x * relativePosition.x + relativePosition.y * relativePosition.y;
+    float distance = sqrt(distanceSquared);
 
-    if (distSq == 0.0f) return;
+    // Check if collision occurs
+    float radiusSum = body.radius + other.radius;
+    if (distance >= radiusSum || distance == 0.0f) return;
 
+    // Collision normal
     Vector2 normal = {
-        relativePosition.x / sqrt(distSq),
-        relativePosition.y / sqrt(distSq)
+        relativePosition.x / distance,
+        relativePosition.y / distance
     };
 
-    float penetrationDepth = (body.radius + other.radius) - sqrt(distSq);
-    if (penetrationDepth > 0) {
-        float correctionFactor = 0.5f * penetrationDepth / (body.mass + other.mass);
-        body.pos.x -= correctionFactor * other.mass * normal.x;
-        body.pos.y -= correctionFactor * other.mass * normal.y;
-        other.pos.x += correctionFactor * body.mass * normal.x;
-        other.pos.y += correctionFactor * body.mass * normal.y;
+    // Resolve interpenetration (Positional Correction)
+    float penetrationDepth = radiusSum - distance;
+    float totalMass = body.mass + other.mass;
+
+    // Positional correction factor
+    const float percent = 0.8f; // Penetration percentage to correct (usually 20% - 80%)
+    const float slop = 0.01f;   // Penetration allowance
+    float correctionMagnitude = (penetrationDepth - slop) / totalMass * percent;
+
+    if (penetrationDepth > slop)
+    {
+        body.pos.x -= correctionMagnitude * other.mass * normal.x;
+        body.pos.y -= correctionMagnitude * other.mass * normal.y;
+        other.pos.x += correctionMagnitude * body.mass * normal.x;
+        other.pos.y += correctionMagnitude * body.mass * normal.y;
     }
 
+    // Relative velocity
+    Vector2 relativeVelocity = {
+        other.velocity.x - body.velocity.x,
+        other.velocity.y - body.velocity.y
+    };
+
+    // Velocity along the normal
     float velocityAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
 
+    // Do not resolve if velocities are separating
     if (velocityAlongNormal > 0) return;
 
-    float impactFactor = (other.restitution + body.restitution) * velocityAlongNormal / (body.mass + other.mass);
+    // Calculate restitution (use the minimum restitution)
+    float e = fmin(body.restitution, other.restitution);
 
-    body.velocity.x += impactFactor * other.mass * normal.x;
-    body.velocity.y += impactFactor * other.mass * normal.y;
-    other.velocity.x -= impactFactor * body.mass * normal.x;
-    other.velocity.y -= impactFactor * body.mass * normal.y;
+    // Calculate impulse scalar
+    float inverseMass1 = 1.0f / body.mass;
+    float inverseMass2 = 1.0f / other.mass;
+    float impulseScalar = -(1 + e) * velocityAlongNormal / (inverseMass1 + inverseMass2);
+
+    // Apply impulse to the bodies
+    Vector2 impulse = {
+        impulseScalar * normal.x,
+        impulseScalar * normal.y
+    };
+
+    body.velocity.x -= inverseMass1 * impulse.x;
+    body.velocity.y -= inverseMass1 * impulse.y;
+    other.velocity.x += inverseMass2 * impulse.x;
+    other.velocity.y += inverseMass2 * impulse.y;
 }
 
 void RigidBody::CalculateCollisionsWithWindow(const WindowInfo& window)
