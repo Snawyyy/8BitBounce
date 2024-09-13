@@ -122,7 +122,7 @@ LRESULT CALLBACK DragLineWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam,
             HDC hdc = BeginPaint(hWnd, &ps);
 
             // Set up the pen
-            HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0)); // Green line
+            HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 255, 0)); // Green line
             HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
 
             // Draw the line
