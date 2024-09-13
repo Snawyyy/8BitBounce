@@ -100,7 +100,7 @@ void RigidBody::ApplyFriction()
         // Apply the friction force
         force.x += frictionForceX;
         force.y += frictionForceY;
-}
+    }
     else
     {
         // Stop the object completely
@@ -142,12 +142,16 @@ void RigidBody::BorderCollisions()
 
 void RigidBody::Draggable()
 {
-    POINT cursorPos;
-    GetCursorPos(&cursorPos);
     if (isDragging)
     {
-        body.pos.x = cursorPos.x - clickOffset.x;
-        body.pos.y = cursorPos.y - clickOffset.y;
+        POINT cursorPos;
+        GetCursorPos(&cursorPos);
+
+        float cursorX = static_cast<float>(cursorPos.x);
+        float cursorY = static_cast<float>(cursorPos.y);
+
+        mouseJointTarget.x = cursorX - clickOffset.x;
+        mouseJointTarget.y = cursorY - clickOffset.y;
     }
 }
 
@@ -289,15 +293,32 @@ void RigidBody::CalculateCollisionsWithWindow(const WindowInfo& window)
 void RigidBody::RunPhysics()
 {
     CalculateTime();
-    UpdatePosition();
-    if (worldGravity) 
+
+    // Update draggable target position
+    Draggable();
+
+    // Apply forces
+    if (worldGravity)
     {
-        ApplyWorldGravity(); 
+        ApplyWorldGravity();
     }
     ApplyAirResistance();
-        ApplyFriction();
-    }
-    Draggable();
+    ApplyFriction();
+    ApplyMouseJoint(); // Apply the mouse joint force
+
+    // Update velocities based on forces
+    Vector2 acceleration = { force.x / body.mass, force.y / body.mass };
+    body.velocity.x += acceleration.x * deltaTime;
+    body.velocity.y += acceleration.y * deltaTime;
+
+    // Clear forces after applying
+    force = Vector2{ 0.0f, 0.0f };
+
+    // Update positions
+    body.pos.x += body.velocity.x * deltaTime;
+    body.pos.y += body.velocity.y * deltaTime;
+
+    // Handle collisions
     BorderCollisions();
 }
 
@@ -311,16 +332,19 @@ void RigidBody::Grab()
 {
     POINT cursorPos;
     GetCursorPos(&cursorPos);
-    clickOffset.x = cursorPos.x - body.pos.x;
-    clickOffset.y = cursorPos.y - body.pos.y;
+
+    float cursorX = static_cast<float>(cursorPos.x);
+    float cursorY = static_cast<float>(cursorPos.y);
+
     isDragging = TRUE;
 
-    // Apply an impulse force to cancel out the existing velocity
-    force.x -= body.velocity.x * body.mass;
-    force.y -= body.velocity.y * body.mass;
+    clickOffset.x = cursorX - body.pos.x;
+    clickOffset.y = cursorY - body.pos.y;
+
+    mouseJointTarget.x = cursorX - clickOffset.x;
+    mouseJointTarget.y = cursorY - clickOffset.y;
 
     SetCapture(hWnd);
-    UpdateSize();
 }
 
 void RigidBody::TrackGrabbing()
@@ -336,21 +360,66 @@ void RigidBody::TrackGrabbing()
 
 void RigidBody::Ungrab()
 {
-    // Update the button's pressed state
     isDragging = FALSE;
-
-    // Calculate the velocity from the change in position
-    float velocityScaleFactor = 50.0f; // Adjust this value as needed
-    body.velocity.x = (body.pos.x - preBodyX) * velocityScaleFactor;
-    body.velocity.y = (body.pos.y - preBodyY) * velocityScaleFactor;
-
-    // Apply an impulse force based on the calculated velocity
-    force.x += body.velocity.x * body.mass;
-    force.y += body.velocity.y * body.mass;
-
-    // Release the capture
     ReleaseCapture();
 }
+
+void RigidBody::ApplyMouseJoint()
+{
+    if (isDragging)
+    {
+        // Calculate the vector from the body to the target
+        Vector2 toTarget = {
+            mouseJointTarget.x - body.pos.x,
+            mouseJointTarget.y - body.pos.y
+        };
+
+        // Calculate the distance to the target
+        float distance = sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+
+        if (distance > 0.0f)
+        {
+            // Normalize the direction
+            Vector2 direction = {
+                toTarget.x / distance,
+                toTarget.y / distance
+            };
+
+            // Define the spring constant (stiffness) and damping factor
+            const float stiffness = 2000.0f; // Adjust as needed
+            const float damping = 50.0f;    // Adjust as needed
+
+            // Calculate the relative velocity between the body and the target (assumed to be stationary)
+            Vector2 relativeVelocity = {
+                body.velocity.x,
+                body.velocity.y
+            };
+
+            // Calculate the spring force
+            float springForceMagnitude = stiffness * distance;
+
+            Vector2 springForce = {
+                springForceMagnitude * direction.x,
+                springForceMagnitude * direction.y
+            };
+
+            // Calculate the damping force
+            Vector2 dampingForce = {
+                damping * relativeVelocity.x,
+                damping * relativeVelocity.y
+            };
+
+            float scalingCoefficient = 0.00000000001f;
+            // Scale factor that weakens the force based on mass
+            float scaleFactor = 1.0f / (1.0f + body.mass * scalingCoefficient);
+
+            // Adjusted force calculation
+            force.x += ((springForce.x - dampingForce.x) * body.mass * scaleFactor);
+            force.y += ((springForce.y - dampingForce.y) * body.mass * scaleFactor);
+        }
+    }
+}
+
 
 float RigidBody::Clamp(float num, float min, float max)
 {

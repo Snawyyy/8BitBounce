@@ -25,6 +25,7 @@ class RigidBody : public Physics
 private:
     bool isDragging = false;
     POINT clickOffset;
+    Vector2 mouseJointTarget;
 
     // Previous body x,y coords
     float preBodyX;
@@ -51,6 +52,7 @@ private:
     void ApplyFriction();
     void BorderCollisions();
     void Draggable();
+    void ApplyMouseJoint();
     int GetTaskbarHeight();
 
 public:
