@@ -31,8 +31,6 @@ private:
     float preBodyY;
 
     float gravity = 9.8; // Gravity (vertical acceleration)
-    float friction = 0.4f;
-    float staticFriction = 0.5f;
     float dampingFactor = 0.9f; // damping factor for energy loss on bounce
 
     const double G = 6.67430e-11;  // gravitational constant in m^3 kg^-1 s^-2
